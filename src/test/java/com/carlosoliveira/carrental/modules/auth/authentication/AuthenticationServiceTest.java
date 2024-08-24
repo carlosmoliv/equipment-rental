@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,5 +52,15 @@ class AuthenticationServiceTest {
 
         // Assert
         verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    @Test
+    void fails_when_email_already_in_use() {
+        // Arrange
+        User existingUser = new User();
+        when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.of(existingUser));
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> sut.signUp(signUpInput));
     }
 }

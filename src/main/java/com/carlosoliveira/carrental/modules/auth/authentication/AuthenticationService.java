@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -15,6 +17,11 @@ public class AuthenticationService {
     private PasswordEncoder passwordEncoder;
 
     public void signUp(SignUpInput signUpInput) {
+        Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
+        if (userExists.isPresent()) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
         User user = new User();
         user.setEmail(signUpInput.email());
         user.setFirstName(signUpInput.firstName());

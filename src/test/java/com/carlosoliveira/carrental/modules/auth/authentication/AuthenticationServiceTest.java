@@ -1,5 +1,6 @@
 package com.carlosoliveira.carrental.modules.auth.authentication;
 
+import com.carlosoliveira.carrental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.carrental.modules.auth.authentication.inputs.SignUpInput;
 import com.carlosoliveira.carrental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.carrental.modules.user.domain.User;
@@ -61,6 +62,6 @@ class AuthenticationServiceTest {
         when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.of(existingUser));
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> sut.signUp(signUpInput));
+        assertThrows(EmailAlreadyInUseException.class, () -> sut.signUp(signUpInput));
     }
 }

@@ -1,5 +1,6 @@
 package com.carlosoliveira.carrental.modules.auth.authentication;
 
+import com.carlosoliveira.carrental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.carrental.modules.auth.authentication.inputs.SignUpInput;
 import com.carlosoliveira.carrental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.carrental.modules.user.domain.User;
@@ -19,7 +20,7 @@ public class AuthenticationService {
     public void signUp(SignUpInput signUpInput) {
         Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
         if (userExists.isPresent()) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new EmailAlreadyInUseException("Email already in use");
         }
 
         User user = new User();

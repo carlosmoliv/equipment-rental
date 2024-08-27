@@ -4,6 +4,7 @@ import com.carlosoliveira.carrental.modules.auth.authentication.exceptions.Email
 import com.carlosoliveira.carrental.modules.auth.authentication.inputs.SignUpInput;
 import com.carlosoliveira.carrental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.carrental.modules.user.domain.User;
+import com.carlosoliveira.carrental.modules.user.domain.factories.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +34,8 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
+        UserFactory userFactory = new UserFactory();
+        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory);
         signUpInput = new SignUpInput(
                 "any_username",
                 "any first name",

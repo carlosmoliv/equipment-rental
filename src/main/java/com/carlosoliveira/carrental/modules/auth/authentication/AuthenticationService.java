@@ -22,7 +22,7 @@ public class AuthenticationService {
     public void signUp(SignUpInput signUpInput) {
         Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
         if (userExists.isPresent()) {
-            throw new EmailAlreadyInUseException("Email already in use");
+            throw new EmailAlreadyInUseException("Email already in use.");
         }
         User user = userFactory.createUser(signUpInput, passwordEncoder);
         userRepository.save(user);

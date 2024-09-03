@@ -1,7 +1,7 @@
-package com.carlosoliveira.carrental.modules.user.domain.factories;
+package com.carlosoliveira.equipment_rental.modules.user.domain.factories;
 
-import com.carlosoliveira.carrental.modules.auth.authentication.inputs.SignUpInput;
-import com.carlosoliveira.carrental.modules.user.domain.User;
+import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

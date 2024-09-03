@@ -1,6 +1,6 @@
-package com.carlosoliveira.carrental.modules.user.application.ports;
+package com.carlosoliveira.equipment_rental.modules.user.application.ports;
 
-import com.carlosoliveira.carrental.modules.user.domain.User;
+import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

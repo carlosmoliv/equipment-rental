@@ -1,4 +1,4 @@
-package com.carlosoliveira.carrental.modules.auth.authentication.inputs;
+package com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs;
 
 public record SignUpInput(
         String username,

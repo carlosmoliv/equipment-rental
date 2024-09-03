@@ -1,10 +1,10 @@
-package com.carlosoliveira.carrental.modules.auth.authentication;
+package com.carlosoliveira.equipment_rental.modules.auth.authentication;
 
-import com.carlosoliveira.carrental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
-import com.carlosoliveira.carrental.modules.auth.authentication.inputs.SignUpInput;
-import com.carlosoliveira.carrental.modules.user.application.ports.UserRepository;
-import com.carlosoliveira.carrental.modules.user.domain.User;
-import com.carlosoliveira.carrental.modules.user.domain.factories.UserFactory;
+import com.carlosoliveira.equipment_rental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
+import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
+import com.carlosoliveira.equipment_rental.modules.user.domain.User;
+import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

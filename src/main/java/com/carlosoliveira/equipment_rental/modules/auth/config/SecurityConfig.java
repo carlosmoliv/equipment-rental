@@ -1,4 +1,4 @@
-package com.carlosoliveira.carrental.modules.auth.config;
+package com.carlosoliveira.equipment_rental.modules.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

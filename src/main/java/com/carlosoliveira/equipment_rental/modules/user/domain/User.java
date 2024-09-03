@@ -1,4 +1,4 @@
-package com.carlosoliveira.carrental.modules.user.domain;
+package com.carlosoliveira.equipment_rental.modules.user.domain;
 
 import lombok.*;
 

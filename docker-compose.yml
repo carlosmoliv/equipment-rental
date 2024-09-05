@@ -1,0 +1,8 @@
+services:
+  postgresql:
+    image: postgres
+    environment:
+      POSTGRES_USER: equipment-rental
+      POSTGRES_PASSWORD: pass123
+    ports:
+      - "5432:5432"

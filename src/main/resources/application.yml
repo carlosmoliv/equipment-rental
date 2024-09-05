@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: equipment-rental
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/equipment-rental
+    username: equipment-rental
+    password: pass123
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect

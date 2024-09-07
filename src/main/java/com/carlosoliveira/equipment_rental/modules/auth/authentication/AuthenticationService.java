@@ -2,9 +2,11 @@ package com.carlosoliveira.equipment_rental.modules.auth.authentication;
 
 import com.carlosoliveira.equipment_rental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.auth.authentication.mappers.UserMapper;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
+import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserFactory userFactory;
+    private final UserMapper userMapper;
 
     public void signUp(SignUpInput signUpInput) {
         Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
@@ -25,6 +28,7 @@ public class AuthenticationService {
             throw new EmailAlreadyInUseException("Email already in use.");
         }
         User user = userFactory.createUser(signUpInput, passwordEncoder);
-        userRepository.save(user);
+        UserEntity userEntity = userMapper.toPersistence(user);
+        userRepository.save(userEntity);
     }
 }

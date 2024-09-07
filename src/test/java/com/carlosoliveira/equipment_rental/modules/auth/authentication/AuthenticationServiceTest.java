@@ -2,9 +2,11 @@ package com.carlosoliveira.equipment_rental.modules.auth.authentication;
 
 import com.carlosoliveira.equipment_rental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.auth.authentication.mappers.UserMapper;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
+import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,9 @@ class AuthenticationServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserMapper userMapper;
+
     @InjectMocks
     private AuthenticationService sut;
 
@@ -35,7 +40,7 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         UserFactory userFactory = new UserFactory();
-        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory);
+        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory, userMapper);
         signUpInput = new SignUpInput(
                 "any_username",
                 "any first name",
@@ -49,13 +54,17 @@ class AuthenticationServiceTest {
     @Test
     void creates_a_new_user() {
         // Arrange
-        when(passwordEncoder.encode(signUpInput.password())).thenReturn("hashed_password");
+        String hashedPassword = "hashed_password";
+        UserEntity userEntity = new UserEntity();
+        when(passwordEncoder.encode(signUpInput.password())).thenReturn(hashedPassword);
+        when(userMapper.toPersistence(any(User.class))).thenReturn(userEntity);
+        when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.empty());
 
         // Act
         sut.signUp(signUpInput);
 
         // Assert
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test

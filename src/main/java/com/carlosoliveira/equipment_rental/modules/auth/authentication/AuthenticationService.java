@@ -23,7 +23,7 @@ public class AuthenticationService {
     private final UserMapper userMapper;
 
     public void signUp(SignUpInput signUpInput) {
-        Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
+        Optional<UserEntity> userExists = userRepository.findByEmail(signUpInput.email());
         if (userExists.isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use.");
         }

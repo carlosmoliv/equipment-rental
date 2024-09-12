@@ -70,7 +70,7 @@ class AuthenticationServiceTest {
     @Test
     void fails_when_email_already_in_use() {
         // Arrange
-        User existingUser = new User();
+        UserEntity existingUser = new UserEntity();
         when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.of(existingUser));
 
         // Act & Assert

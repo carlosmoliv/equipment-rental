@@ -3,12 +3,14 @@ package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.github.javafaker.Faker;
+import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
 class AuthenticationIntegrationTest {
 
     @Container
@@ -69,6 +72,7 @@ class AuthenticationIntegrationTest {
 
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+            assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
         }
     }
 }

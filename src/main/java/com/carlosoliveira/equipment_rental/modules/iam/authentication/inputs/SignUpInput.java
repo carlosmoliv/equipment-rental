@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs;
+package com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs;
 
 public record SignUpInput(
         String username,

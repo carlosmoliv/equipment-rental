@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.auth.authentication.dtos;
+package com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos;
 
 public record SignUpDto(
         String username,

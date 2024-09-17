@@ -1,8 +1,8 @@
-package com.carlosoliveira.equipment_rental.modules.auth.authentication;
+package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.exceptions.EmailAlreadyInUseException;
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.mappers.UserMapper;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.exceptions.EmailAlreadyInUseException;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.mappers.UserMapper;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
@@ -40,7 +40,7 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         UserFactory userFactory = new UserFactory();
-        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory, userMapper);
+        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory);
         signUpInput = new SignUpInput(
                 "any_username",
                 "any first name",
@@ -64,13 +64,13 @@ class AuthenticationServiceTest {
         sut.signUp(signUpInput);
 
         // Assert
-        verify(userRepository, times(1)).save(any(UserEntity.class));
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
     void fails_when_email_already_in_use() {
         // Arrange
-        UserEntity existingUser = new UserEntity();
+        User existingUser = new User();
         when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.of(existingUser));
 
         // Act & Assert

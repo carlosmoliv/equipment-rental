@@ -1,7 +1,7 @@
-package com.carlosoliveira.equipment_rental.modules.auth.authentication;
+package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.dtos.SignUpDto;
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.inputs.SignUpInput;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;

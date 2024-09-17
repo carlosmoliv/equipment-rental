@@ -1,12 +1,10 @@
 package com.carlosoliveira.equipment_rental.modules.user.application.ports;
 
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 
 import java.util.Optional;
 
-@Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByEmail(String email);
+public interface UserRepository {
+    void save(User user);
+    Optional<User> findByEmail(String email);
 }

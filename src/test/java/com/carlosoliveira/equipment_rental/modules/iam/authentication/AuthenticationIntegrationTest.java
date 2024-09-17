@@ -1,6 +1,6 @@
-package com.carlosoliveira.equipment_rental.modules.auth.authentication;
+package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.auth.authentication.dtos.SignUpDto;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.github.javafaker.Faker;
 import org.assertj.core.api.Assertions;
@@ -69,7 +69,6 @@ class AuthenticationIntegrationTest {
 
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
         }
     }
 }

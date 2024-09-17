@@ -51,7 +51,6 @@ class AuthenticationServiceTest {
     void creates_a_new_user() {
         // Arrange
         String hashedPassword = "hashed_password";
-        UserEntity userEntity = new UserEntity();
         when(hashingService.encode(signUpInput.password())).thenReturn(hashedPassword);
         when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.empty());
 

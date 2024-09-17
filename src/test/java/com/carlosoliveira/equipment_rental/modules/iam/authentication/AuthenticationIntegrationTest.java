@@ -65,7 +65,7 @@ class AuthenticationIntegrationTest {
     class SignUpTests {
 
         @Test
-        void sign_up_succeeds() throws Exception {
+        void sign_up_succeeds() {
             // Act
             ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-up", signUpDto, String.class);
 

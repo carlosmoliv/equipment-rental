@@ -2,7 +2,7 @@ package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.mappers.UserMapper;
+import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -27,10 +26,7 @@ class AuthenticationServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private UserMapper userMapper;
+    private HashingService hashingService;
 
     @InjectMocks
     private AuthenticationService sut;
@@ -40,7 +36,7 @@ class AuthenticationServiceTest {
     @BeforeEach
     void setUp() {
         UserFactory userFactory = new UserFactory();
-        sut = new AuthenticationService(userRepository, passwordEncoder, userFactory);
+        sut = new AuthenticationService(userRepository, hashingService, userFactory);
         signUpInput = new SignUpInput(
                 "any_username",
                 "any first name",
@@ -56,8 +52,7 @@ class AuthenticationServiceTest {
         // Arrange
         String hashedPassword = "hashed_password";
         UserEntity userEntity = new UserEntity();
-        when(passwordEncoder.encode(signUpInput.password())).thenReturn(hashedPassword);
-        when(userMapper.toPersistence(any(User.class))).thenReturn(userEntity);
+        when(hashingService.encode(signUpInput.password())).thenReturn(hashedPassword);
         when(userRepository.findByEmail(signUpInput.email())).thenReturn(Optional.empty());
 
         // Act

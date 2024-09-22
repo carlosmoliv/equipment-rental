@@ -1,10 +1,13 @@
 package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignInInput;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,7 +22,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = AuthenticationController.class)
@@ -40,6 +45,7 @@ class AuthenticationControllerTest {
     private ObjectMapper objectMapper;
 
     private SignUpDto signUpDto;
+    private SignInDto signInDto;
 
 
     @BeforeEach
@@ -55,19 +61,44 @@ class AuthenticationControllerTest {
                 password,
                 password
         );
+        signInDto = new SignInDto("valid.email@example.com", password);
     }
 
-    @Test
-    void sign_up_succeeds_when_user_does_not_exists() throws Exception {
-        // Arrange
-        doNothing().when(authenticationService).signUp(any(SignUpInput.class));
 
-        // Act
-        ResultActions response = mockMvc.perform(post("/api/authentication/sign-up")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(signUpDto)));
+    @Nested
+    class SignUpTests {
+        @Test
+        void sign_up_succeeds_when_user_does_not_exists() throws Exception {
+            // Arrange
+            doNothing().when(authenticationService).signUp(any(SignUpInput.class));
 
-        // Assert
-        response.andExpect(status().isCreated());
+            // Act
+            ResultActions response = mockMvc.perform(post("/api/authentication/sign-up")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signUpDto)));
+
+            // Assert
+            response.andExpect(status().isCreated());
+        }
+    }
+
+    @Nested
+    class LoginTests {
+
+        @Test
+        void login_returns_token_when_credentials_are_valid() throws Exception {
+            // Arrange
+            String token = "some-jwt-token";
+            when(authenticationService.login(any(SignInInput.class))).thenReturn(token);
+
+            // Act
+            ResultActions response = mockMvc.perform(post("/api/authentication/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signInDto)));
+
+            // Assert
+            response.andExpect(status().isOk())
+                    .andExpect(content().string(token));
+        }
     }
 }

@@ -13,3 +13,6 @@ spring:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+logging:
+  level:
+    org.springframework: TRACE

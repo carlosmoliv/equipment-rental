@@ -33,12 +33,9 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/login")
+    @PostMapping("/sign-in")
     public ResponseEntity<String> login(@RequestBody SignInDto signInDto) {
-        SignInInput signInInput = new SignInInput(
-                signInDto.email(),
-                signInDto.password()
-        );
+        SignInInput signInInput = new SignInInput(signInDto.password(), signInDto.email());
         String token = authenticationService.login(signInInput);
         return ResponseEntity.ok(token);
     }

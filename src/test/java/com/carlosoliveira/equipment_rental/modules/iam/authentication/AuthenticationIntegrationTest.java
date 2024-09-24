@@ -1,5 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
+import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.github.javafaker.Faker;
@@ -34,11 +35,11 @@ class AuthenticationIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    private SignUpDto signUpDto;
-
     @Autowired
     private TestRestTemplate restTemplate;
 
+    private SignUpDto signUpDto;
+    private SignInDto signInDto;
     Faker faker = new Faker();
 
     @BeforeEach
@@ -52,6 +53,11 @@ class AuthenticationIntegrationTest {
                 faker.phoneNumber().toString(),
                 password,
                 password
+        );
+
+        signInDto = new SignInDto(
+                signUpDto.email(),
+                signUpDto.password()
         );
     }
 
@@ -72,6 +78,23 @@ class AuthenticationIntegrationTest {
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
+        }
+    }
+
+    @Nested
+    class LoginTests {
+        
+        @Test
+        void login_succeeds_with_valid_credentials() {
+            // Arrange
+            restTemplate.postForEntity("/api/authentication/sign-up", signUpDto, String.class);
+
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-in", signInDto, String.class);
+
+            // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            Assertions.assertThat(response.getBody()).isNotNull();
         }
     }
 }

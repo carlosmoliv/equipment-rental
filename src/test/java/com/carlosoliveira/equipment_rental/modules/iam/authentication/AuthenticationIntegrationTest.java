@@ -9,6 +9,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,6 +73,17 @@ class AuthenticationIntegrationTest {
 
     @Nested
     class SignUpTests {
+        static Stream<SignUpDto> invalidSignUpDtos() {
+            return Stream.of(
+                    new SignUpDto(null, "John", "Doe", "john@example.com", "1234567890", "password", "password"),
+                    new SignUpDto("username", null, "Doe", "john@example.com", "1234567890", "password", "password"),
+                    new SignUpDto("username", "John", null, "john@example.com", "1234567890", "password", "password"),
+                    new SignUpDto("username", "John", "Doe", null, "1234567890", "password", "password"),
+                    new SignUpDto("username", "John", "Doe", "john@example.com", null, "password", "password"),
+                    new SignUpDto("username", "John", "Doe", "john@example.com", "1234567890", null, "password"),
+                    new SignUpDto("username", "John", "Doe", "john@example.com", "1234567890", "password", null)
+            );
+        }
 
         @Test
         void sign_up_succeeds() {
@@ -78,6 +93,17 @@ class AuthenticationIntegrationTest {
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
+        }
+
+
+        @ParameterizedTest
+        @MethodSource("invalidSignUpDtos")
+        void signUp_fails_with_missing_fields(SignUpDto invalidSignUpDto) {
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-up", invalidSignUpDto, String.class);
+
+            // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
     }
 

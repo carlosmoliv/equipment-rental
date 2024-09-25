@@ -21,7 +21,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpDto signUpDto) {
         SignUpInput signUpInput = new SignUpInput(
                 signUpDto.username(),
                 signUpDto.firstName(),

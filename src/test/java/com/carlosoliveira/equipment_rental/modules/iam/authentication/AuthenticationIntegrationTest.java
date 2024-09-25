@@ -108,5 +108,29 @@ class AuthenticationIntegrationTest {
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
+
+        @Test
+        void login_fails_with_missing_password() {
+            // Arrange
+            SignInDto invalidSignInDto = new SignInDto(signInDto.email(), null);
+
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-in", invalidSignInDto, String.class);
+
+            // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+
+        @Test
+        void login_fails_with_short_password() {
+            // Arrange
+            SignInDto invalidSignInDto = new SignInDto(signInDto.email(),"short");
+
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-in", invalidSignInDto, String.class);
+
+            // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
     }
 }

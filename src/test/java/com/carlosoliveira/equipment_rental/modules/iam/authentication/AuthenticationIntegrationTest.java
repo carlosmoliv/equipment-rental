@@ -83,7 +83,7 @@ class AuthenticationIntegrationTest {
 
     @Nested
     class LoginTests {
-        
+
         @Test
         void login_succeeds_with_valid_credentials() {
             // Arrange
@@ -95,6 +95,18 @@ class AuthenticationIntegrationTest {
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             Assertions.assertThat(response.getBody()).isNotNull();
+        }
+
+        @Test
+        void login_fails_with_invalid_email() {
+            // Arrange
+            SignInDto invalidSignInDto = new SignInDto("invalid_email_format", signInDto.password());
+
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-in", invalidSignInDto, String.class);
+
+            // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }
     }
 }

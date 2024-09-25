@@ -4,6 +4,7 @@ import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignI
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignInInput;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<String> login(@RequestBody SignInDto signInDto) {
+    public ResponseEntity<String> login(@Valid @RequestBody SignInDto signInDto) {
         SignInInput signInInput = new SignInInput(signInDto.password(), signInDto.email());
         String token = authenticationService.login(signInInput);
         return ResponseEntity.ok(token);

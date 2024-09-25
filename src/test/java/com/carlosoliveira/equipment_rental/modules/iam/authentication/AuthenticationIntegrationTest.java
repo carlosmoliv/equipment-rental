@@ -155,6 +155,26 @@ class AuthenticationIntegrationTest {
             // Act
             ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-in", invalidSignInDto, String.class);
 
+             // Assert
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        }
+
+        @Test
+        void sign_up_fails_when_passwords_do_not_match() {
+            // Arrange
+            SignUpDto invalidSignUpDto = new SignUpDto(
+                    "username",
+                    "firstName",
+                    "lastName",
+                    "email@example.com",
+                    "123456789",
+                    "password123",
+                    "differentPassword"
+            );
+
+            // Act
+            ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-up", invalidSignUpDto, String.class);
+
             // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         }

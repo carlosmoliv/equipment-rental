@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.iam.authorization.config;
+package com.carlosoliveira.equipment_rental.modules.iam.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -16,6 +16,7 @@ public class UserMapper {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phoneNumber(user.getPhoneNumber())
+                 .role(user.getRole())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class UserMapper {
                 .firstName(userEntity.getFirstName())
                 .lastName(userEntity.getLastName())
                 .phoneNumber(userEntity.getPhoneNumber())
+                .role(userEntity.getRole())
                 .build();
     }
 }

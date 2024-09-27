@@ -17,6 +17,8 @@ jwt:
   secret: 414b1e7fe1ef832cd7196281557014f704bef678dbfa1c968129fcf97cb12555
   expiration: 86400000 # 24 hours in milliseconds
 
-#logging:
-#  level:
-#    org.springframework: TRACE
+logging:
+  level:
+    org:
+#      springframework: TRACE
+      hibernate: DEBUG

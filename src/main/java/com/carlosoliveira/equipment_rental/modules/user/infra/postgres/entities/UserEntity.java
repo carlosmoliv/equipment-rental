@@ -1,5 +1,6 @@
  package com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities;
 
+ import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,4 +47,8 @@ public class UserEntity {
     @LastModifiedDate
     @Column()
     private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column()
+    private Role role;
 }

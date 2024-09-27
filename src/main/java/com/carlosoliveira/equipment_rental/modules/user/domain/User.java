@@ -1,6 +1,9 @@
 package com.carlosoliveira.equipment_rental.modules.user.domain;
 
+import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import lombok.*;
+
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,4 +17,5 @@ public class User {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    private Set<Role> roles;
 }

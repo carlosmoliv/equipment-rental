@@ -10,7 +10,6 @@ public class UserMapper {
     public UserEntity toPersistence(User user) {
         return UserEntity.builder()
                 .id(user.getId())
-                .username(user.getUsername())
                 .password(user.getPassword())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
@@ -23,7 +22,6 @@ public class UserMapper {
     public User toDomain(UserEntity userEntity) {
         return User.builder()
                 .id(userEntity.getId())
-                .username(userEntity.getUsername())
                 .password(userEntity.getPassword())
                 .email(userEntity.getEmail())
                 .firstName(userEntity.getFirstName())

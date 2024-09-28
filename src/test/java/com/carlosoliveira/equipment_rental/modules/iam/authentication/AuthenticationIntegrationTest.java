@@ -50,7 +50,6 @@ class AuthenticationIntegrationTest {
     public void init() {
         String password = faker.internet().password();
         signUpDto = new SignUpDto(
-                faker.name().username(),
                 faker.name().firstName(),
                 faker.name().lastName(),
                 "any_email@email.com",
@@ -75,13 +74,12 @@ class AuthenticationIntegrationTest {
     class SignUpTests {
         static Stream<SignUpDto> invalidSignUpDtos() {
             return Stream.of(
-                    new SignUpDto(null, "John", "Doe", "john@example.com", "1234567890", "password", "password"),
-                    new SignUpDto("username", null, "Doe", "john@example.com", "1234567890", "password", "password"),
-                    new SignUpDto("username", "John", null, "john@example.com", "1234567890", "password", "password"),
-                    new SignUpDto("username", "John", "Doe", null, "1234567890", "password", "password"),
-                    new SignUpDto("username", "John", "Doe", "john@example.com", null, "password", "password"),
-                    new SignUpDto("username", "John", "Doe", "john@example.com", "1234567890", null, "password"),
-                    new SignUpDto("username", "John", "Doe", "john@example.com", "1234567890", "password", null)
+                    new SignUpDto( null, "Doe", "john@example.com", "1234567890", "password", "password"),
+                    new SignUpDto( "John", null, "john@example.com", "1234567890", "password", "password"),
+                    new SignUpDto( "John", "Doe", null, "1234567890", "password", "password"),
+                    new SignUpDto( "John", "Doe", "john@example.com", null, "password", "password"),
+                    new SignUpDto( "John", "Doe", "john@example.com", "1234567890", null, "password"),
+                    new SignUpDto( "John", "Doe", "john@example.com", "1234567890", "password", null)
             );
         }
 
@@ -94,7 +92,6 @@ class AuthenticationIntegrationTest {
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
         }
-
 
         @ParameterizedTest
         @MethodSource("invalidSignUpDtos")
@@ -163,7 +160,6 @@ class AuthenticationIntegrationTest {
         void sign_up_fails_when_passwords_do_not_match() {
             // Arrange
             SignUpDto invalidSignUpDto = new SignUpDto(
-                    "username",
                     "firstName",
                     "lastName",
                     "email@example.com",

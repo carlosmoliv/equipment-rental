@@ -47,7 +47,6 @@ class AuthenticationServiceTest {
         UserFactory userFactory = new UserFactory();
         sut = new AuthenticationService(userRepository, hashingService, userFactory, tokenService);
         signUpInput = new SignUpInput(
-                "any_username",
                 "any first name",
                 "any last name",
                 "password",

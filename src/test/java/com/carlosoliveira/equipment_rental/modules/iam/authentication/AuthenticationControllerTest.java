@@ -53,7 +53,6 @@ class AuthenticationControllerTest {
         Faker faker = new Faker();
         String password = faker.internet().password();
         signUpDto = new SignUpDto(
-                faker.name().username(),
                 faker.name().firstName(),
                 faker.name().lastName(),
                 "any_email@email.com",

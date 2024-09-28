@@ -23,7 +23,6 @@ public class AuthenticationController {
     @PostMapping("/sign-up")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpDto signUpDto) {
         SignUpInput signUpInput = new SignUpInput(
-                signUpDto.username(),
                 signUpDto.firstName(),
                 signUpDto.lastName(),
                 signUpDto.password(),

@@ -6,9 +6,6 @@ import jakarta.validation.constraints.Size;
 
 @PasswordMatches
 public record SignUpDto(
-        @NotBlank(message = "Username is required")
-        String username,
-
         @NotBlank(message = "First name is required")
         String firstName,
 

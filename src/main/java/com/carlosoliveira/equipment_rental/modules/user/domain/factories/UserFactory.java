@@ -14,7 +14,6 @@ public class UserFactory {
                 .email(signUpInput.email())
                 .firstName(signUpInput.firstName())
                 .lastName(signUpInput.lastName())
-                .username(signUpInput.username())
                 .password(hashingService.encode(signUpInput.password()))
                 .role(Role.CUSTOMER)
                 .build();

@@ -1,4 +1,4 @@
- package com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities;
+ package com.carlosoliveira.equipment_rental.modules.user.infra.jpa.entities;
 
  import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import jakarta.persistence.*;

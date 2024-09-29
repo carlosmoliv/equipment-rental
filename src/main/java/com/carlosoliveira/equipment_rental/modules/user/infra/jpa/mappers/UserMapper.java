@@ -1,7 +1,7 @@
-package com.carlosoliveira.equipment_rental.modules.user.infra.postgres.mappers;
+package com.carlosoliveira.equipment_rental.modules.user.infra.jpa.mappers;
 
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.entities.UserEntity;
 import org.springframework.stereotype.Service;
 
 @Service

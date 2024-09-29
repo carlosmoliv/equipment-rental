@@ -2,7 +2,7 @@ package com.carlosoliveira.equipment_rental.modules.rental.infra.entities.jpa;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.entities.EquipmentEntity;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,9 +1,9 @@
-package com.carlosoliveira.equipment_rental.modules.user.infra.postgres.repositories;
+package com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories;
 
 import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.entities.UserEntity;
-import com.carlosoliveira.equipment_rental.modules.user.infra.postgres.mappers.UserMapper;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.entities.UserEntity;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.mappers.UserMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

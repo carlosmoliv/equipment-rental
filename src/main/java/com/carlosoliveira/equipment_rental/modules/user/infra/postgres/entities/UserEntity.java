@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 public class UserEntity {
+
     @Id
     @GeneratedValue
     private Long id;

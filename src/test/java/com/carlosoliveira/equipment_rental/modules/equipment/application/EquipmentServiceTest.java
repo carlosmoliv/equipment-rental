@@ -6,6 +6,7 @@ import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
 import com.github.javafaker.Faker;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -64,6 +66,18 @@ class EquipmentServiceTest {
             sut.create(createEquipmentInput);
 
             verify(equipmentRepository, times(1)).save(any(Equipment.class));
+        }
+
+        @Test
+        void throws_exception_when_category_not_found() {
+            // Arrange
+            when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(EntityNotFoundException.class, () -> sut.create(createEquipmentInput));
+
+            // Verify that save is never called
+            verify(equipmentRepository, never()).save(any(Equipment.class));
         }
     }
 }

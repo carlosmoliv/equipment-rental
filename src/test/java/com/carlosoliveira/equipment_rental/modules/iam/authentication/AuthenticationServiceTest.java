@@ -5,9 +5,8 @@ import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.Sig
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
 import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
 import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
-import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
-import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,8 +43,6 @@ class AuthenticationServiceTest {
 
     @BeforeEach
     void setUp() {
-        UserFactory userFactory = new UserFactory();
-        sut = new AuthenticationService(userRepository, hashingService, userFactory, tokenService);
         signUpInput = new SignUpInput(
                 "any first name",
                 "any last name",
@@ -66,6 +63,7 @@ class AuthenticationServiceTest {
 
     @Nested
     class SignUpTests {
+
         @Test
         void creates_a_new_user() {
             // Arrange

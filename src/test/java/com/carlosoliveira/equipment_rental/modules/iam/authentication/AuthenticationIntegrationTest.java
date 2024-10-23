@@ -2,7 +2,7 @@ package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
-import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;

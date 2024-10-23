@@ -5,9 +5,9 @@ import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.Sig
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
 import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
 import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
-import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
-import com.carlosoliveira.equipment_rental.modules.user.domain.factories.UserFactory;
+import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +21,6 @@ public class AuthenticationService {
 
     private final UserRepository userRepository;
     private final HashingService hashingService;
-    private final UserFactory userFactory;
     private final TokenService tokenService;
 
     public void signUp(SignUpInput signUpInput) {
@@ -29,19 +28,28 @@ public class AuthenticationService {
         if (userExists.isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use.");
         }
-        User user = userFactory.createUser(signUpInput, hashingService);
+        User user = User.builder()
+                .email(signUpInput.email())
+                .firstName(signUpInput.firstName())
+                .lastName(signUpInput.lastName())
+                .password(hashingService.encode(signUpInput.password()))
+                .role(Role.CUSTOMER)
+                .build();
+
         userRepository.save(user);
     }
 
 
     public String login(SignInInput signInInput) {
-        User user = userRepository.findByEmail(signInInput.email())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+        Optional<User> user = userRepository.findByEmail(signInInput.email());
+        if (user.isEmpty()) {
+            throw new UsernameNotFoundException("User not found.");
+        }
 
-        if (!hashingService.matches(signInInput.password(), user.getPassword())) {
+        if (!hashingService.matches(signInInput.password(), user.get().getPassword())) {
             throw new BadCredentialsException("Invalid credentials.");
         }
 
-        return tokenService.generate(user);
+        return tokenService.generate(user.get());
     }
 }

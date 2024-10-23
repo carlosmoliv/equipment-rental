@@ -1,9 +1,9 @@
 package com.carlosoliveira.equipment_rental.modules.iam.config;
 
 import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
-import com.carlosoliveira.equipment_rental.modules.user.application.ports.UserRepository;
-import com.carlosoliveira.equipment_rental.modules.user.domain.SecurityUser;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
+import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
+import com.carlosoliveira.equipment_rental.modules.user.domain.SecurityUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -33,10 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         if(token != null && tokenService.validate(token)) {
             String userEmail = tokenService.getEmailFromToken(token);
-            User user = userRepository.findByEmail(userEmail)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+            Optional<User> user = userRepository.findByEmail(userEmail);
+            if(user.isEmpty()) {
+                throw new UsernameNotFoundException("User not found.");
+            }
 
-            UserDetails userDetails = new SecurityUser(user);
+            UserDetails userDetails = new SecurityUser(user.get());
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());

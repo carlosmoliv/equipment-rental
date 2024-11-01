@@ -7,6 +7,13 @@ public class PasswordConfirmationValidator implements ConstraintValidator<Passwo
 
     @Override
     public boolean isValid(SignUpDto signUpDto, ConstraintValidatorContext context) {
+        String password = signUpDto.password();
+        String passwordConfirmation = signUpDto.passwordConfirmation();
+
+        if (password == null || passwordConfirmation == null) {
+            return false;
+        }
+
         return signUpDto.password().equals(signUpDto.passwordConfirmation());
     }
 }

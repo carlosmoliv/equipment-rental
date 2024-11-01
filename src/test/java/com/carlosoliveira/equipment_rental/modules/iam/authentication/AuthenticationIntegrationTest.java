@@ -18,6 +18,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -52,7 +54,7 @@ class AuthenticationIntegrationTest {
         signUpDto = new SignUpDto(
                 faker.name().firstName(),
                 faker.name().lastName(),
-                "any_email@email.com",
+                faker.internet().emailAddress(),
                 faker.phoneNumber().toString(),
                 password,
                 password
@@ -85,10 +87,8 @@ class AuthenticationIntegrationTest {
 
         @Test
         void sign_up_succeeds() {
-            // Act
             ResponseEntity<String> response = restTemplate.postForEntity("/api/authentication/sign-up", signUpDto, String.class);
 
-            // Assert
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertTrue(userRepository.findByEmail(signUpDto.email()).isPresent());
         }

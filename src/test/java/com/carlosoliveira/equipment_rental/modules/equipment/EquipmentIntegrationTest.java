@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.*;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,10 +28,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EquipmentIntegrationTest {
-
-    Faker faker = new Faker();
-    private CreateEquipmentDto createEquipmentDto;
 
     @Container
     @ServiceConnection
@@ -38,14 +38,22 @@ class EquipmentIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @BeforeAll
-    static void startContainers() {
+    String token;
+    private Long categoryId;
+    Faker faker = new Faker();
+
+    @DynamicPropertySource
+    static void setDataSourceProperties(DynamicPropertyRegistry registry) {
         postgres.start();
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-    @AfterAll
-    static void stopContainers() {
-        postgres.stop();
+    @BeforeAll
+    void setup() {
+        this.token = getAccessToken();
+        this.categoryId = getCategoryId();
     }
 
     @Test
@@ -60,14 +68,14 @@ class EquipmentIntegrationTest {
         @Test
         void equipment_is_created_when_valid_data_is_provided() {
             // Arrange
-            createEquipmentDto = new CreateEquipmentDto(
+            CreateEquipmentDto createEquipmentDto = new CreateEquipmentDto(
                     faker.commerce().productName(),
                     faker.lorem().paragraph(3),
                     BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
                     true,
-                    getCategoryId()
+                    categoryId
             );
-            HttpEntity<CreateEquipmentDto> equipmentDto = new HttpEntity<>(createEquipmentDto, getHeadersWithToken());
+            HttpEntity<CreateEquipmentDto> equipmentDto = new HttpEntity<>(createEquipmentDto, getHeadersWithToken(token));
 
             // Act
             ResponseEntity<String> response = restTemplate.postForEntity("/api/equipments", equipmentDto, String.class);
@@ -79,7 +87,7 @@ class EquipmentIntegrationTest {
 
     private Long getCategoryId() {
         CreateEquipmentCategoryDto createCategoryDto = new CreateEquipmentCategoryDto("Electronics");
-        HttpEntity<CreateEquipmentCategoryDto> categoryRequest = new HttpEntity<>(createCategoryDto, getHeadersWithToken());
+        HttpEntity<CreateEquipmentCategoryDto> categoryRequest = new HttpEntity<>(createCategoryDto, getHeadersWithToken(token));
         ResponseEntity<String> categoryResponse = restTemplate.postForEntity(
                 "/api/categories",
                 categoryRequest,
@@ -90,9 +98,9 @@ class EquipmentIntegrationTest {
         return Long.valueOf(categoryId);
     }
 
-    private HttpHeaders getHeadersWithToken() {
+    private HttpHeaders getHeadersWithToken(String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(getAccessToken());
+        headers.setBearerAuth(token);
         return headers;
     }
 

@@ -6,17 +6,22 @@ import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.r
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class EquipmentCategoryService {
 
     private final EquipmentCategoryRepository equipmentCategoryRepository;
 
-    public void create(CreateEquipmentCategoryInput input) {
+    public Long create(CreateEquipmentCategoryInput input) {
         EquipmentCategory category = EquipmentCategory.builder()
                 .name(input.name())
                 .build();
+        return equipmentCategoryRepository.save(category).getId();
+    }
 
-        equipmentCategoryRepository.save(category);
+    public List<EquipmentCategory> findAll() {
+        return equipmentCategoryRepository.findAll();
     }
 }

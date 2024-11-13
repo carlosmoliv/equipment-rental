@@ -14,9 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -44,9 +42,15 @@ class EquipmentCategoryServiceTest {
 
         @Test
         void creates_a_new_category() {
-            sut.create(createEquipmentCategoryInput);
+            // Arrange
+            EquipmentCategory equipmentCategory = EquipmentCategory.builder().id(1L).name("Eletronics").build();
+            when(categoryRepository.save(any(EquipmentCategory.class))).thenReturn(equipmentCategory);
 
-            verify(categoryRepository, times(1)).save(any(EquipmentCategory.class));
+            // Act
+            Long categoryId = sut.create(createEquipmentCategoryInput);
+
+            // Assert
+            assertThat(categoryId).isEqualTo(equipmentCategory.getId());
         }
     }
 
@@ -57,7 +61,7 @@ class EquipmentCategoryServiceTest {
         void list_all_categories() {
             // Arrange
             List<EquipmentCategory> mockCategories = List.of(
-                    EquipmentCategory.builder().id(1L).name("Eletronics").build(),
+                    EquipmentCategory.builder().id(1L).name("Electronics").build(),
                     EquipmentCategory.builder().id(2L).name("Furniture").build()
             );
 
@@ -67,8 +71,8 @@ class EquipmentCategoryServiceTest {
             List<EquipmentCategory> categories = sut.findAll();
 
             // Assert
-            assertThat(categories, hasSize(2));
-            assertThat(categories, is(mockCategories));
+            assertThat(categories).hasSize(2);
+            assertThat(categories).containsAll(mockCategories);
         }
     }
 }

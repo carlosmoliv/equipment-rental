@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
@@ -77,6 +78,19 @@ class RentalServiceTest {
                             rental.getTotalCost().equals(equipment.getHourlyRate()
                                     .multiply(BigDecimal.valueOf(Duration.between(startDate, endDate).toHours())))
             ));
+        }
+
+        @Test
+        void rental_over_48_hours_receives_10_percent_discount() {
+            equipment.setHourlyRate(BigDecimal.valueOf(10));
+            LocalDateTime startDate = LocalDateTime.now();
+            LocalDateTime endDate = startDate.plusHours(50);
+
+            BigDecimal totalCost = sut.calculateTotalCost(equipment, startDate, endDate);
+
+            BigDecimal expectedCost = BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(50))
+                    .multiply(BigDecimal.valueOf(0.9));
+            assertThat(totalCost).isEqualByComparingTo(expectedCost);
         }
     }
 }

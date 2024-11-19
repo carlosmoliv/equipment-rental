@@ -92,5 +92,18 @@ class RentalServiceTest {
                     .multiply(BigDecimal.valueOf(0.9));
             assertThat(totalCost).isEqualByComparingTo(expectedCost);
         }
+
+        @Test
+        void rental_less_than_48_hours_do_not_receives_10_percent_discount() {
+            equipment.setHourlyRate(BigDecimal.valueOf(10));
+            LocalDateTime startDate = LocalDateTime.now();
+            LocalDateTime endDate = startDate.plusHours(48);
+
+
+            BigDecimal totalCost = sut.calculateTotalCost(equipment, startDate, endDate);
+
+            BigDecimal expectedCost = BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(48));
+            assertThat(totalCost).isEqualByComparingTo(expectedCost);
+        }
     }
 }

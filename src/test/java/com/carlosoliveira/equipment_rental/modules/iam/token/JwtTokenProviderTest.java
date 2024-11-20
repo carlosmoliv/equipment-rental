@@ -72,13 +72,4 @@ class JwtTokenProviderTest {
         // Assert
         assertFalse(isValid);
     }
-
-//    @Test
-//    void should_throw_exception_for_invalid_claims() {
-//        // Arrange
-//        String invalidToken = "invalid.token.here";
-//
-//        // Act & Assert
-//        assertThrows(Exception.class, () -> jwtTokenProvider.extractClaim(invalidToken, Claims::getSubject));
-//    }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 @Table(name = "equipments")
 public class Equipment {
-    
+
     @Id
     @GeneratedValue
     private Long id;
@@ -34,6 +34,9 @@ public class Equipment {
 
     @Column(nullable = false)
     private boolean available;
+
+    @Column(nullable = false)
+    private BigDecimal hourlyRate;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

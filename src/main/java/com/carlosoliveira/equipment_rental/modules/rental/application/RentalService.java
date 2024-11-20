@@ -33,6 +33,9 @@ public class RentalService {
 
         User user = userRepository.findById(input.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        if (canUserRent(user)) {
+            throw new IllegalStateException("User has reached the rental limit");
+        }
 
         BigDecimal totalCost = calculateTotalCost(equipment, input.startDate(), input.endDate());
 
@@ -60,5 +63,10 @@ public class RentalService {
             totalCost = totalCost.multiply(BigDecimal.valueOf(0.9));
         }
         return totalCost;
+    }
+
+    private boolean canUserRent(User user) {
+        List<Rental> activeRentals = rentalRepository.findByUserAndStatus(user, RentalStatus.ONGOING);
+        return activeRentals.size() < 3;
     }
 }

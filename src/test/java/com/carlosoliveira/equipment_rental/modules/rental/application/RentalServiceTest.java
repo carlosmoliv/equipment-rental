@@ -1,8 +1,9 @@
-package com.carlosoliveira.equipment_rental.modules.rental.application;
+    package com.carlosoliveira.equipment_rental.modules.rental.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
+import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
@@ -133,6 +134,39 @@ class RentalServiceTest {
             IllegalStateException thrown =
                     assertThrows(IllegalStateException.class, () -> sut.create(input));
             assertThat(thrown.getMessage()).isEqualTo("Equipment is not available for the selected dates");
+        }
+
+
+        @Test
+        void user_can_only_rent_up_to_2_items_at_a_time() {
+            // Arrange
+            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
+
+            when(equipmentRepository.findById(1L)).thenReturn(Optional.of(equipment));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+            Rental ongoingRental1 = Rental.builder()
+                    .status(RentalStatus.ONGOING)
+                    .equipment(equipment)
+                    .user(user)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .build();
+            Rental ongoingRental2 = Rental.builder()
+                    .status(RentalStatus.ONGOING)
+                    .equipment(equipment)
+                    .user(user)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .build();
+
+            when(rentalRepository.findByUserAndStatus(user, RentalStatus.ONGOING))
+                    .thenReturn(List.of(ongoingRental1, ongoingRental2));
+
+            // Act & Assert
+            IllegalStateException thrown =
+                    assertThrows(IllegalStateException.class, () -> sut.create(input));
+            assertThat(thrown.getMessage()).isEqualTo("User has reached the rental limit");
         }
     }
 }

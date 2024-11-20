@@ -19,13 +19,14 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RentalServiceTest {
@@ -104,6 +105,20 @@ class RentalServiceTest {
 
             BigDecimal expectedCost = BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(48));
             assertThat(totalCost).isEqualByComparingTo(expectedCost);
+        }
+
+        @Test
+        void shouldThrowExceptionWhenEquipmentIsNotAvailable() {
+            lenient().when(equipmentRepository.findById(1L)).thenReturn(Optional.of(equipment));
+            lenient().when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+            lenient().when(rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate)).thenReturn(List.of(rental));
+            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
+
+            IllegalStateException thrown =
+                    assertThrows(IllegalStateException.class, () -> {
+                        sut.create(input);
+                    });
+            assertThat(thrown.getMessage()).isEqualTo("Equipment is not available for the selected dates");
         }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +27,10 @@ public class RentalService {
     public void create(CreateRentalInput input) {
         Equipment equipment = equipmentRepository.findById(input.equipmentId())
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
+        if (!isEquipmentAvailable(equipment, input.startDate(), input.endDate())) {
+            throw new IllegalStateException("Equipment is not available for the selected dates");
+        }
+
         User user = userRepository.findById(input.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
@@ -40,6 +45,11 @@ public class RentalService {
                 .totalCost(totalCost)
                 .build();
         rentalRepository.save(rental);
+    }
+
+    private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Rental> rentals = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
+        return rentals.isEmpty();
     }
 
     public BigDecimal calculateTotalCost(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {

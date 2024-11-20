@@ -83,6 +83,7 @@ class RentalServiceTest {
 
         @Test
         void rental_over_48_hours_receives_10_percent_discount() {
+            // Arrange
             equipment.setHourlyRate(BigDecimal.valueOf(10));
             LocalDateTime startDate = LocalDateTime.now();
             LocalDateTime endDate = startDate.plusHours(50);
@@ -92,8 +93,10 @@ class RentalServiceTest {
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(rentalRepository.save(any(Rental.class))).thenReturn(rental);
 
+            // Act
             sut.create(input);
 
+            // Assert
             verify(rentalRepository).save(argThat(rental ->
                     rental.getTotalCost().compareTo(BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(50)).multiply(BigDecimal.valueOf(0.9))) == 0
             ));
@@ -101,6 +104,7 @@ class RentalServiceTest {
 
         @Test
         void rental_less_than_48_hours_does_not_receive_discount() {
+            // Arrange
             equipment.setHourlyRate(BigDecimal.valueOf(10));
             LocalDateTime startDate = LocalDateTime.now();
             LocalDateTime endDate = startDate.plusHours(48);
@@ -110,19 +114,21 @@ class RentalServiceTest {
             when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             when(rentalRepository.save(any(Rental.class))).thenReturn(rental);
 
+            // Act
             sut.create(input);
 
+            // Assert
             verify(rentalRepository).save(argThat(rental ->
                     rental.getTotalCost().compareTo(BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(48))) == 0
             ));
         }
 
         @Test
-        void shouldThrowExceptionWhenEquipmentIsNotAvailable() {
+        void equipment_not_available_cannot_be_rented() {
+            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
             lenient().when(equipmentRepository.findById(1L)).thenReturn(Optional.of(equipment));
             lenient().when(userRepository.findById(1L)).thenReturn(Optional.of(user));
             lenient().when(rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate)).thenReturn(List.of(rental));
-            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
 
             IllegalStateException thrown =
                     assertThrows(IllegalStateException.class, () -> sut.create(input));

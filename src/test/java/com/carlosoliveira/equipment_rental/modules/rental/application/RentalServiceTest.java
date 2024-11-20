@@ -86,25 +86,35 @@ class RentalServiceTest {
             equipment.setHourlyRate(BigDecimal.valueOf(10));
             LocalDateTime startDate = LocalDateTime.now();
             LocalDateTime endDate = startDate.plusHours(50);
+            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
 
-            BigDecimal totalCost = sut.calculateTotalCost(equipment, startDate, endDate);
+            when(equipmentRepository.findById(1L)).thenReturn(Optional.of(equipment));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+            when(rentalRepository.save(any(Rental.class))).thenReturn(rental);
 
-            BigDecimal expectedCost = BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(50))
-                    .multiply(BigDecimal.valueOf(0.9));
-            assertThat(totalCost).isEqualByComparingTo(expectedCost);
+            sut.create(input);
+
+            verify(rentalRepository).save(argThat(rental ->
+                    rental.getTotalCost().compareTo(BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(50)).multiply(BigDecimal.valueOf(0.9))) == 0
+            ));
         }
 
         @Test
-        void rental_less_than_48_hours_do_not_receives_10_percent_discount() {
+        void rental_less_than_48_hours_does_not_receive_discount() {
             equipment.setHourlyRate(BigDecimal.valueOf(10));
             LocalDateTime startDate = LocalDateTime.now();
             LocalDateTime endDate = startDate.plusHours(48);
+            CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
 
+            when(equipmentRepository.findById(1L)).thenReturn(Optional.of(equipment));
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+            when(rentalRepository.save(any(Rental.class))).thenReturn(rental);
 
-            BigDecimal totalCost = sut.calculateTotalCost(equipment, startDate, endDate);
+            sut.create(input);
 
-            BigDecimal expectedCost = BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(48));
-            assertThat(totalCost).isEqualByComparingTo(expectedCost);
+            verify(rentalRepository).save(argThat(rental ->
+                    rental.getTotalCost().compareTo(BigDecimal.valueOf(10).multiply(BigDecimal.valueOf(48))) == 0
+            ));
         }
 
         @Test
@@ -115,9 +125,7 @@ class RentalServiceTest {
             CreateRentalInput input = new CreateRentalInput(user.getId(), equipment.getId(), startDate, endDate);
 
             IllegalStateException thrown =
-                    assertThrows(IllegalStateException.class, () -> {
-                        sut.create(input);
-                    });
+                    assertThrows(IllegalStateException.class, () -> sut.create(input));
             assertThat(thrown.getMessage()).isEqualTo("Equipment is not available for the selected dates");
         }
     }

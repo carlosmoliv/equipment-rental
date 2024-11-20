@@ -52,7 +52,7 @@ public class RentalService {
         return rentals.isEmpty();
     }
 
-    public BigDecimal calculateTotalCost(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
+    private BigDecimal calculateTotalCost(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
         long durationInHours = Duration.between(startDate, endDate).toHours();
         BigDecimal rate = equipment.getHourlyRate();
         BigDecimal totalCost = rate.multiply(BigDecimal.valueOf(durationInHours));

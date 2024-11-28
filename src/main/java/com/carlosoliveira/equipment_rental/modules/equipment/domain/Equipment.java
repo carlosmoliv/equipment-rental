@@ -44,4 +44,7 @@ public class Equipment {
 
     @OneToMany(mappedBy = "equipment")
     private List<Rental> rentals;
+
+    @Column(nullable = false)
+    private BigDecimal lateFeeRate;
 }

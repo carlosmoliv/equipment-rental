@@ -43,5 +43,11 @@ public class Rental {
 
     @Enumerated(EnumType.STRING)
     private RentalStatus status;
+
+    @Column(nullable = false)
+    private LocalDateTime returnDate;
+
+    @Column(nullable = false)
+    private BigDecimal lateFees;
 }
 

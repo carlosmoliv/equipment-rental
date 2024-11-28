@@ -12,4 +12,6 @@ import java.util.List;
 public interface RentalRepository extends JpaRepository<Rental, Long> {
     List<Rental> findByEquipmentAndPeriod(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate);
     List<Rental> findByUserAndStatus(User user, RentalStatus rentalStatus);
+    List<Rental> findByUser(User user);
+    List<Rental> findByEquipment(Equipment equipment);
 }

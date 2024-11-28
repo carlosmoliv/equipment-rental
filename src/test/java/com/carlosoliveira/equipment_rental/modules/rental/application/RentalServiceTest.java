@@ -228,5 +228,24 @@ class RentalServiceTest {
             assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.valueOf(30));
             verify(rentalRepository, times(2)).save(any(Rental.class));
         }
+
+        @Test
+        void rental_returned_after_end_date_receives_zero_fees_if_equipment_has_no_fee_rate() {
+            // Arrange
+            Rental rental = Rental.builder()
+                    .status(RentalStatus.ONGOING)
+                    .endDate(LocalDateTime.now().minusHours(5))
+                    .equipment(Equipment.builder().lateFeeRate(BigDecimal.ZERO).build())
+                    .build();
+
+            when(rentalRepository.findById(anyLong())).thenReturn(Optional.of(rental));
+
+            // Act
+            Rental returnedRental = sut.returnRental(1L);
+
+            // Assert
+            assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.ZERO);
+            verify(rentalRepository, times(2)).save(any(Rental.class));
+        }
     }
 }

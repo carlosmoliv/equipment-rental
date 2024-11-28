@@ -47,12 +47,42 @@ public class RentalService {
                 .endDate(input.endDate())
                 .totalCost(totalCost)
                 .build();
+
+        // TODO: Publish notification (event-driven)
+
         rentalRepository.save(rental);
+    }
+
+    public Rental returnRental(Long rentalId) {
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental not found"));
+
+        if (rental.getStatus() != RentalStatus.ONGOING) {
+            throw new IllegalStateException("Only ongoing rentals can be returned");
+        }
+
+        rental.setStatus(RentalStatus.COMPLETED);
+        rental.setReturnDate(LocalDateTime.now());
+        rentalRepository.save(rental);
+
+        BigDecimal lateFees = calculateLateFees(rental);
+        rental.setLateFees(lateFees);
+
+        rentalRepository.save(rental);
+
+        // TODO: Publish the rental returned event
+
+        return rental;
     }
 
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
         List<Rental> rentals = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
         return rentals.isEmpty();
+    }
+
+    private boolean canUserRent(User user) {
+        List<Rental> activeRentals = rentalRepository.findByUserAndStatus(user, RentalStatus.ONGOING);
+        return activeRentals.size() < 3;
     }
 
     private BigDecimal calculateTotalCost(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
@@ -65,8 +95,15 @@ public class RentalService {
         return totalCost;
     }
 
-    private boolean canUserRent(User user) {
-        List<Rental> activeRentals = rentalRepository.findByUserAndStatus(user, RentalStatus.ONGOING);
-        return activeRentals.size() < 3;
+    private BigDecimal calculateLateFees(Rental rental) {
+        if (rental.getStatus() != RentalStatus.COMPLETED) {
+            return BigDecimal.ZERO;
+        }
+        LocalDateTime returnDate = LocalDateTime.now();
+        if (returnDate.isBefore(rental.getEndDate())) {
+            return BigDecimal.ZERO;
+        }
+        long lateHours = Duration.between(rental.getEndDate(), returnDate).toHours();
+        return BigDecimal.valueOf(lateHours).multiply(rental.getEquipment().getLateFeeRate());
     }
 }

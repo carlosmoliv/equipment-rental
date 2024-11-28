@@ -169,4 +169,45 @@ class RentalServiceTest {
             assertThat(thrown.getMessage()).isEqualTo("User has reached the rental limit");
         }
     }
+
+    @Nested
+    class ReturnTests {
+
+        @Test
+        void rental_is_successfully_returned() {
+            rental.setStatus(RentalStatus.ONGOING);
+            rental.setEndDate(LocalDateTime.now().minusHours(5));
+            when(rentalRepository.findById(1L)).thenReturn(Optional.of(rental));
+
+            // Act
+            Rental returnedRental = sut.returnRental(rental.getId());
+
+            // Assert
+            assertThat(returnedRental.getStatus()).isEqualTo(RentalStatus.COMPLETED);
+            assertThat(returnedRental.getReturnDate()).isNotNull();
+            assertThat(returnedRental.getLateFees()).isNotEqualTo(BigDecimal.ZERO);
+
+            verify(rentalRepository).save(argThat(r ->
+                    r.getStatus() == RentalStatus.COMPLETED && r.getReturnDate() != null
+            ));
+        }
+
+        @Test
+        void  rental_returned_before_end_date_receives_no_late_fees() {
+            // Arrange
+            Rental rental = Rental.builder()
+                    .status(RentalStatus.ONGOING)
+                    .endDate(LocalDateTime.now().plusHours(2))
+                    .equipment(Equipment.builder().lateFeeRate(BigDecimal.TEN).build())
+                    .build();
+            when(rentalRepository.findById(anyLong())).thenReturn(Optional.of(rental));
+
+            // Act
+            Rental returnedRental = sut.returnRental(1L);
+
+            // Assert
+            assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.ZERO);
+            verify(rentalRepository, times(2)).save(any(Rental.class));
+        }
+    }
 }

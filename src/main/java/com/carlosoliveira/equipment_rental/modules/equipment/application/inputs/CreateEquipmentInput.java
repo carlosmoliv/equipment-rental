@@ -7,6 +7,8 @@ public record CreateEquipmentInput(
         String description,
         BigDecimal pricePerDay,
         boolean available,
-        Long categoryId
+        Long categoryId,
+        BigDecimal lateFeeRate,
+        BigDecimal hourlyRate
 ) {
 }

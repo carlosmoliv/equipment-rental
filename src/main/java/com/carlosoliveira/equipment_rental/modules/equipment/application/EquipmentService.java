@@ -26,10 +26,12 @@ public class EquipmentService {
 
         Equipment equipment = Equipment.builder()
                 .name(input.name())
-                .description( input.description())
+                .description(input.description())
                 .pricePerDay(input.pricePerDay())
                 .available(input.available())
                 .category(category.get())
+                .lateFeeRate(input.lateFeeRate())
+                .hourlyRate(input.hourlyRate())
                 .build();
 
         equipmentRepository.save(equipment);

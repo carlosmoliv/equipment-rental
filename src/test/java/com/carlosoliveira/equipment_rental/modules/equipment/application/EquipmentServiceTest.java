@@ -47,7 +47,9 @@ class EquipmentServiceTest {
             faker.lorem().sentence(),
             BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
             true,
-            123L
+            123L,
+            BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
+            BigDecimal.valueOf(faker.number().randomDouble(2, 1, 20))
         );
         equipmentCategory = EquipmentCategory.builder()
                 .id(123L)
@@ -70,13 +72,9 @@ class EquipmentServiceTest {
 
         @Test
         void throws_exception_when_category_not_found() {
-            // Arrange
             when(categoryRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-            // Act & Assert
             assertThrows(EntityNotFoundException.class, () -> sut.create(createEquipmentInput));
-
-            // Verify that save is never called
             verify(equipmentRepository, never()).save(any(Equipment.class));
         }
     }

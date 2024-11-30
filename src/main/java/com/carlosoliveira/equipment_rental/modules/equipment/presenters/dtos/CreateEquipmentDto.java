@@ -13,6 +13,8 @@ public record CreateEquipmentDto (
     BigDecimal pricePerDay,
     boolean available,
     @NotNull
-    Long categoryId
+    Long categoryId,
+    @NotNull(message = "Late fee rate is required") BigDecimal lateFeeRate,
+    @NotNull(message = "Hourly rate is required") BigDecimal hourlyRate
 ){
 }

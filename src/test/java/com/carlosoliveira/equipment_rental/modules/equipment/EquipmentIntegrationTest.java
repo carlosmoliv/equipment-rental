@@ -57,7 +57,7 @@ class EquipmentIntegrationTest {
     }
 
     @Test
-    void connection_established()  {
+    void connection_established() {
         assertThat(postgres.isCreated()).isTrue();
         assertThat(postgres.isRunning()).isTrue();
     }
@@ -73,7 +73,9 @@ class EquipmentIntegrationTest {
                     faker.lorem().paragraph(3),
                     BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
                     true,
-                    categoryId
+                    categoryId,
+                    BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
+                    BigDecimal.valueOf(faker.number().randomDouble(2, 1, 20))
             );
             HttpEntity<CreateEquipmentDto> equipmentDto = new HttpEntity<>(createEquipmentDto, getHeadersWithToken(token));
 

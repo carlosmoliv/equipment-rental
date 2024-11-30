@@ -22,7 +22,10 @@ public class EquipmentController {
                 createEquipmentDto.description(),
                 createEquipmentDto.pricePerDay(),
                 createEquipmentDto.available(),
-                createEquipmentDto.categoryId()
+                createEquipmentDto.categoryId(),
+                createEquipmentDto.lateFeeRate(),
+                createEquipmentDto.hourlyRate()
+
         );
         equipmentService.create(createEquipmentInput);
         return ResponseEntity.status(HttpStatus.CREATED).build();

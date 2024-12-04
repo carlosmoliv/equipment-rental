@@ -1,5 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.equipment;
 
+import com.carlosoliveira.equipment_rental.helpers.AuthTestHelper;
 import com.carlosoliveira.equipment_rental.modules.equipment.presenters.dtos.CreateEquipmentDto;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.presenters.dtos.CreateEquipmentCategoryDto;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
@@ -31,6 +32,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EquipmentIntegrationTest {
 
+    private Long categoryId;
+    private HttpHeaders headers;
+    Faker faker = new Faker();
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres");
@@ -38,9 +43,8 @@ class EquipmentIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    String token;
-    private Long categoryId;
-    Faker faker = new Faker();
+    @Autowired
+    private AuthTestHelper authTestHelper;
 
     @DynamicPropertySource
     static void setDataSourceProperties(DynamicPropertyRegistry registry) {
@@ -52,7 +56,7 @@ class EquipmentIntegrationTest {
 
     @BeforeAll
     void setup() {
-        this.token = getAccessToken();
+        this.headers = authTestHelper.getHeadersWithAuth();
         this.categoryId = getCategoryId();
     }
 
@@ -77,7 +81,7 @@ class EquipmentIntegrationTest {
                     BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
                     BigDecimal.valueOf(faker.number().randomDouble(2, 1, 20))
             );
-            HttpEntity<CreateEquipmentDto> equipmentDto = new HttpEntity<>(createEquipmentDto, getHeadersWithToken(token));
+            HttpEntity<CreateEquipmentDto> equipmentDto = new HttpEntity<>(createEquipmentDto, headers);
 
             // Act
             ResponseEntity<String> response = restTemplate.postForEntity("/api/equipments", equipmentDto, String.class);
@@ -89,7 +93,7 @@ class EquipmentIntegrationTest {
 
     private Long getCategoryId() {
         CreateEquipmentCategoryDto createCategoryDto = new CreateEquipmentCategoryDto("Electronics");
-        HttpEntity<CreateEquipmentCategoryDto> categoryRequest = new HttpEntity<>(createCategoryDto, getHeadersWithToken(token));
+        HttpEntity<CreateEquipmentCategoryDto> categoryRequest = new HttpEntity<>(createCategoryDto, headers);
         ResponseEntity<String> categoryResponse = restTemplate.postForEntity(
                 "/api/categories",
                 categoryRequest,
@@ -98,24 +102,5 @@ class EquipmentIntegrationTest {
         String categoryId = categoryResponse.getBody();
         assert categoryId != null;
         return Long.valueOf(categoryId);
-    }
-
-    private HttpHeaders getHeadersWithToken(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        return headers;
-    }
-
-    private String getAccessToken() {
-        String pass = "pass123";
-        String email = faker.internet().emailAddress();
-
-        SignUpDto signUpDto = new SignUpDto(faker.name().firstName(), faker.name().lastName(), email, faker.phoneNumber().toString(), pass, pass);
-        restTemplate.postForEntity("/api/authentication/sign-up", signUpDto, String.class);
-
-        SignInDto signInDto = new SignInDto(email, pass);
-
-        ResponseEntity<String> signInResponse = restTemplate.postForEntity("/api/authentication/sign-in", signInDto, String.class);
-        return signInResponse.getBody();
     }
 }

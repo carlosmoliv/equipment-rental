@@ -3,10 +3,7 @@ package com.carlosoliveira.equipment_rental.modules.equipment.domain;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -42,6 +39,7 @@ public class Equipment {
     @JoinColumn(name = "category_id")
     private EquipmentCategory category;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "equipment")
     private List<Rental> rentals;
 

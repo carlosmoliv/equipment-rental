@@ -27,7 +27,7 @@ public class AuthenticationController {
                 signUpDto.lastName(),
                 signUpDto.password(),
                 signUpDto.email(),
-                signUpDto.email()
+                signUpDto.phoneNumber()
         );
         authenticationService.signUp(signUpInput);
         return ResponseEntity.status(HttpStatus.CREATED).build();

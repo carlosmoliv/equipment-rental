@@ -16,7 +16,7 @@ public class EquipmentController {
     private final EquipmentService equipmentService;
 
     @PostMapping()
-    public ResponseEntity<Void> signUp(@Valid @RequestBody CreateEquipmentDto createEquipmentDto) {
+    public ResponseEntity<Long> signUp(@Valid @RequestBody CreateEquipmentDto createEquipmentDto) {
         CreateEquipmentInput createEquipmentInput = new CreateEquipmentInput(
                 createEquipmentDto.name(),
                 createEquipmentDto.description(),
@@ -25,9 +25,8 @@ public class EquipmentController {
                 createEquipmentDto.categoryId(),
                 createEquipmentDto.lateFeeRate(),
                 createEquipmentDto.hourlyRate()
-
         );
-        equipmentService.create(createEquipmentInput);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        Long equipmentId = equipmentService.create(createEquipmentInput);
+        return ResponseEntity.status(HttpStatus.CREATED).body(equipmentId);
     }
 }

@@ -18,12 +18,11 @@ public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentCategoryRepository categoryEquipmentRepository;
 
-    public void create(CreateEquipmentInput input) {
+    public Long create(CreateEquipmentInput input) {
         Optional<EquipmentCategory> category = categoryEquipmentRepository.findById(input.categoryId());
         if (category.isEmpty()) {
             throw new EntityNotFoundException();
         }
-
         Equipment equipment = Equipment.builder()
                 .name(input.name())
                 .description(input.description())
@@ -33,7 +32,6 @@ public class EquipmentService {
                 .lateFeeRate(input.lateFeeRate())
                 .hourlyRate(input.hourlyRate())
                 .build();
-
-        equipmentRepository.save(equipment);
+        return equipmentRepository.save(equipment).getId();
     }
 }

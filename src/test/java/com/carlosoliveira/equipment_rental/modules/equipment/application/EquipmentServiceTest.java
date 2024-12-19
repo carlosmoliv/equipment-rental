@@ -21,13 +21,12 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 class EquipmentServiceTest {
 
     private CreateEquipmentInput createEquipmentInput;
-
-    @Mock
     private EquipmentCategory equipmentCategory;
 
     @Mock
@@ -63,11 +62,13 @@ class EquipmentServiceTest {
 
         @Test
         void creates_a_new_equipment() {
+            Equipment equipment = Equipment.builder().id(321L).build();
             when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(equipmentCategory));
+            when(equipmentRepository.save(any(Equipment.class))).thenReturn(equipment);
 
-            sut.create(createEquipmentInput);
+            Long equipmentId = sut.create(createEquipmentInput);
 
-            verify(equipmentRepository, times(1)).save(any(Equipment.class));
+            assertThat(equipmentId).isEqualTo(equipment.getId());
         }
 
         @Test

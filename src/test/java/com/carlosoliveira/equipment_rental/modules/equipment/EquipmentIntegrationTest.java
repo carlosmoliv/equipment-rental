@@ -3,8 +3,6 @@ package com.carlosoliveira.equipment_rental.modules.equipment;
 import com.carlosoliveira.equipment_rental.helpers.AuthTestHelper;
 import com.carlosoliveira.equipment_rental.modules.equipment.presenters.dtos.CreateEquipmentDto;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.presenters.dtos.CreateEquipmentCategoryDto;
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import org.assertj.core.api.Assertions;

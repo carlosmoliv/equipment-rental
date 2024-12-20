@@ -44,5 +44,5 @@ public class Equipment {
     private List<Rental> rentals;
 
     @Column(nullable = false)
-    private BigDecimal lateFeeRate;
+    private BigDecimal lateFeeRate = BigDecimal.ZERO;
 }

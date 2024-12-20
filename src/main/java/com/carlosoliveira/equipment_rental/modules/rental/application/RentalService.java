@@ -33,7 +33,7 @@ public class RentalService {
 
         User user = userRepository.findById(input.userId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        if (canUserRent(user)) {
+        if (!canUserRent(user)) {
             throw new IllegalStateException("User has reached the rental limit");
         }
 
@@ -63,7 +63,6 @@ public class RentalService {
 
         rental.setStatus(RentalStatus.COMPLETED);
         rental.setReturnDate(LocalDateTime.now());
-        rentalRepository.save(rental);
 
         BigDecimal lateFees = calculateLateFees(rental);
         rental.setLateFees(lateFees);
@@ -71,7 +70,6 @@ public class RentalService {
         rentalRepository.save(rental);
 
         // TODO: Publish the rental returned event
-
         return rental;
     }
 

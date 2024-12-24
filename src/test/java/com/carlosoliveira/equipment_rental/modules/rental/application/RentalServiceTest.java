@@ -211,7 +211,7 @@ class RentalServiceTest {
 
             // Assert
             assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.ZERO);
-            verify(rentalRepository, times(2)).save(any(Rental.class));
+            verify(rentalRepository, times(1)).save(any(Rental.class));
         }
 
         @Test
@@ -230,7 +230,7 @@ class RentalServiceTest {
 
             // Assert
             assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.valueOf(30));
-            verify(rentalRepository, times(2)).save(any(Rental.class));
+            verify(rentalRepository, times(1)).save(any(Rental.class));
         }
 
         @Test
@@ -249,7 +249,7 @@ class RentalServiceTest {
 
             // Assert
             assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.ZERO);
-            verify(rentalRepository, times(2)).save(any(Rental.class));
+            verify(rentalRepository, times(1)).save(any(Rental.class));
         }
     }
 }

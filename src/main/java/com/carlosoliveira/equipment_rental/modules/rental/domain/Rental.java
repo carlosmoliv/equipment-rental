@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -43,10 +44,22 @@ public class Rental {
     @Column()
     private RentalStatus status;
 
-    @Column(nullable = true)
+    @Column()
     private LocalDateTime returnDate;
 
-    @Column(nullable = true)
+    @Column()
     private BigDecimal lateFees;
+
+    public BigDecimal calculateLateFees() {
+        if (this.getStatus() != RentalStatus.COMPLETED) {
+            return BigDecimal.ZERO;
+        }
+        LocalDateTime returnDate = LocalDateTime.now();
+        if (returnDate.isBefore(this.getEndDate())) {
+            return BigDecimal.ZERO;
+        }
+        long lateHours = Duration.between(this.getEndDate(), returnDate).toHours();
+        return BigDecimal.valueOf(lateHours).multiply(this.getEquipment().getLateFeeRate());
+    }
 }
 

@@ -37,7 +37,8 @@ public class RentalService {
             throw new IllegalStateException("User has reached the rental limit");
         }
 
-        BigDecimal totalCost = calculateTotalCost(equipment, input.startDate(), input.endDate());
+        BigDecimal totalCost = equipment
+                .calculateCost(Duration.between(input.startDate(), input.endDate()).toHours());
 
         Rental rental = Rental.builder()
                 .status(RentalStatus.PENDING)
@@ -48,7 +49,7 @@ public class RentalService {
                 .totalCost(totalCost)
                 .build();
 
-        // TODO: Publish notification (event-driven)
+        // TODO: Publish the rental created event (event-driven)
 
         rentalRepository.save(rental);
     }
@@ -63,45 +64,21 @@ public class RentalService {
 
         rental.setStatus(RentalStatus.COMPLETED);
         rental.setReturnDate(LocalDateTime.now());
-
-        BigDecimal lateFees = calculateLateFees(rental);
-        rental.setLateFees(lateFees);
-
+        rental.setLateFees(rental.calculateLateFees());
         rentalRepository.save(rental);
 
-        // TODO: Publish the rental returned event
+        // TODO: Publish the rental returned event (event-driven)
+
         return rental;
     }
 
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
-        List<Rental> rentals = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
-        return rentals.isEmpty();
+        List<Rental> equipments = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
+        return equipments.isEmpty();
     }
 
     private boolean canUserRent(User user) {
         List<Rental> activeRentals = rentalRepository.findByUserAndStatus(user, RentalStatus.ONGOING);
         return activeRentals.size() < 3;
-    }
-
-    private BigDecimal calculateTotalCost(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
-        long durationInHours = Duration.between(startDate, endDate).toHours();
-        BigDecimal rate = equipment.getHourlyRate();
-        BigDecimal totalCost = rate.multiply(BigDecimal.valueOf(durationInHours));
-        if (durationInHours > 48) {
-            totalCost = totalCost.multiply(BigDecimal.valueOf(0.9));
-        }
-        return totalCost;
-    }
-
-    private BigDecimal calculateLateFees(Rental rental) {
-        if (rental.getStatus() != RentalStatus.COMPLETED) {
-            return BigDecimal.ZERO;
-        }
-        LocalDateTime returnDate = LocalDateTime.now();
-        if (returnDate.isBefore(rental.getEndDate())) {
-            return BigDecimal.ZERO;
-        }
-        long lateHours = Duration.between(rental.getEndDate(), returnDate).toHours();
-        return BigDecimal.valueOf(lateHours).multiply(rental.getEquipment().getLateFeeRate());
     }
 }

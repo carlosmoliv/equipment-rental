@@ -45,4 +45,13 @@ public class Equipment {
 
     @Column(nullable = false)
     private BigDecimal lateFeeRate = BigDecimal.ZERO;
+
+    public BigDecimal calculateCost(long durationInHours) {
+        BigDecimal rate = this.getHourlyRate();
+        BigDecimal totalCost = rate.multiply(BigDecimal.valueOf(durationInHours));
+        if (durationInHours > 48) {
+            totalCost = totalCost.multiply(BigDecimal.valueOf(0.9));
+        }
+        return totalCost;
+    }
 }

@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.rental.application;
+package com.carlosoliveira.equipment_rental.modules.rental.application.inputs;
 
 import java.time.LocalDateTime;
 

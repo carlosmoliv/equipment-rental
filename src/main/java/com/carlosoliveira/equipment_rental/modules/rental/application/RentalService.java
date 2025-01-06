@@ -2,6 +2,12 @@ package com.carlosoliveira.equipment_rental.modules.rental.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentProcessingException;
+import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentStatusException;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
+import com.carlosoliveira.equipment_rental.modules.rental.application.ports.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
@@ -19,10 +25,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class RentalService {
-
     private final RentalRepository rentalRepository;
     private final EquipmentRepository equipmentRepository;
     private final UserRepository userRepository;
+    private final PaymentGatewayService paymentGatewayService;
 
     public void create(CreateRentalInput input) {
         Equipment equipment = equipmentRepository.findById(input.equipmentId())
@@ -32,7 +38,7 @@ public class RentalService {
         }
 
         User user = userRepository.findById(input.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(()  -> new EntityNotFoundException("User not found"));
         if (!canUserRent(user)) {
             throw new IllegalStateException("User has reached the rental limit");
         }
@@ -70,6 +76,25 @@ public class RentalService {
         // TODO: Publish the rental returned event (event-driven)
 
         return rental;
+    }
+
+    public void payRental(PayRentalInput input) {
+        Rental rental = rentalRepository.findById(input.rentalId())
+                .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
+
+        if (rental.getStatus() != RentalStatus.PENDING) {
+            throw new PaymentStatusException();
+        }
+
+        try {
+            PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost());
+            paymentGatewayService.processPayment(paymentDetails);
+        } catch (Exception e) {
+            throw new PaymentProcessingException();
+        }
+
+        rental.setStatus(RentalStatus.PAID);
+        rentalRepository.save(rental);
     }
 
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {

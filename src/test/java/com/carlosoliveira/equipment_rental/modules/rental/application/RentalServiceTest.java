@@ -2,12 +2,18 @@ package com.carlosoliveira.equipment_rental.modules.rental.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentStatusException;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
+import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
+import com.carlosoliveira.equipment_rental.modules.rental.application.ports.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import com.github.javafaker.Faker;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,6 +46,9 @@ class RentalServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    PaymentGatewayService paymentGatewayService;
 
     @InjectMocks
     RentalService sut;
@@ -250,6 +259,55 @@ class RentalServiceTest {
             // Assert
             assertThat(returnedRental.getLateFees()).isEqualTo(BigDecimal.ZERO);
             verify(rentalRepository, times(1)).save(any(Rental.class));
+        }
+    }
+
+    @Nested
+    class PayRentalTests {
+        @Test
+        void rental_payment_is_successful_when_valid_data_is_provided() {
+            // Arrange
+            rental.setStatus(RentalStatus.PENDING);
+            rental.setTotalCost(BigDecimal.valueOf(100));
+            PayRentalInput input = new PayRentalInput(rental.getId());
+            when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
+            doNothing().when(paymentGatewayService).processPayment(new PaymentDetails(BigDecimal.valueOf(100)));
+
+            // Act
+            sut.payRental(input);
+
+            // Assert
+            verify(paymentGatewayService).processPayment(argThat(details ->
+                    details.amount().equals(rental.getTotalCost())
+            ));
+            verify(rentalRepository).save(argThat(r ->
+                    r.getStatus() == RentalStatus.PAID));
+        }
+
+        @Test
+        void rental_payment_fails_when_rental_is_not_found() {
+            // Arrange
+            PayRentalInput input = new PayRentalInput(999L);
+            when(rentalRepository.findById(999L)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            EntityNotFoundException thrown =
+                    assertThrows(EntityNotFoundException.class, () -> sut.payRental(input));
+            assertThat(thrown.getMessage()).isEqualTo("Rental not found");
+            verifyNoInteractions(paymentGatewayService);
+        }
+
+        @Test
+        void rental_payment_fails_when_rental_is_not_pending() {
+            // Arrange
+            rental.setStatus(RentalStatus.COMPLETED);
+            PayRentalInput input = new PayRentalInput(rental.getId());
+            when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
+
+            // Act & Assert
+            PaymentStatusException thrown =
+                    assertThrows(PaymentStatusException.class, () -> sut.payRental(input));
+            verifyNoInteractions(paymentGatewayService);
         }
     }
 }

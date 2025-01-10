@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  config:
+    import: optional:classpath:env.properties
   application:
     name: equipment-rental
   datasource:
@@ -17,8 +19,11 @@ jwt:
   secret: 414b1e7fe1ef832cd7196281557014f704bef678dbfa1c968129fcf97cb12555
   expiration: 86400000 # 24 hours in milliseconds
 
-#logging:
-#  level:
-#    org:
-#      springframework: TRACE
-#      hibernate: DEBUG
+logging:
+  level:
+    org:
+      springframework: TRACE
+      hibernate: DEBUG
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY}

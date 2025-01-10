@@ -41,7 +41,7 @@ public class Rental {
     private BigDecimal totalCost;
 
     @Enumerated(EnumType.STRING)
-    @Column()
+    @Column(nullable = false)
     private RentalStatus status;
 
     @Column()

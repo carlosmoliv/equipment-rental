@@ -15,15 +15,22 @@ spring:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: carlosmoliveira93@gmail.com
+    password: ${MAIL_PASSWORD}
+    protocol: smtp
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
 jwt:
   secret: 414b1e7fe1ef832cd7196281557014f704bef678dbfa1c968129fcf97cb12555
   expiration: 86400000 # 24 hours in milliseconds
-
-logging:
-  level:
-    org:
-      springframework: TRACE
-      hibernate: DEBUG
-
 stripe:
   secret-key: ${STRIPE_SECRET_KEY}
+
+#logging:
+#  level:
+#    org:
+#      springframework: TRACE
+#      hibernate: DEBUG

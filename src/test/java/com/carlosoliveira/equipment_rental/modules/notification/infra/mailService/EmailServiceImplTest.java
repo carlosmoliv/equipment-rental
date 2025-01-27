@@ -6,11 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,5 +49,24 @@ class EmailServiceImplTest {
         assertThat(sentMessage.getTo()).containsExactly(to);
         assertThat(sentMessage.getSubject()).isEqualTo(subject);
         assertThat(sentMessage.getText()).isEqualTo(body);
+    }
+
+
+    @Test
+    void throws_runtime_exception_when_mail_sender_throws_exception() {
+        // Given
+        String to = "recipient@example.com";
+        String subject = "Test Subject";
+        String body = "Test Body";
+
+        MailSendException mailSendException = new MailSendException("Simulated error");
+        doThrow(mailSendException).when(mailSender).send(any(SimpleMailMessage.class));
+
+        // When & Then
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> emailService.send(to, subject, body));
+
+        assertThat(exception.getMessage()).isEqualTo("Error sending email");
+        assertThat(exception.getCause()).isSameAs(mailSendException);
     }
 }

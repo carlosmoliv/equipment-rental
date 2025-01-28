@@ -1,13 +1,13 @@
 package com.carlosoliveira.equipment_rental.modules.payment.infra.paymentGateway;
 
+import com.carlosoliveira.equipment_rental.modules.notification.application.ports.MailService;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.rental.application.ports.PaymentGatewayService;
+import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.param.PaymentIntentCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,9 +16,11 @@ import java.math.BigDecimal;
 public class StripePaymentGateway implements PaymentGatewayService {
     private static final Logger logger = LoggerFactory.getLogger(StripePaymentGateway.class);
     private final StripeClient client;
+    private final MailService mailService;
 
-    public StripePaymentGateway(@Value("${stripe.secret-key}") String stripeSecretKey) {
-        this.client = new StripeClient(stripeSecretKey);
+    public StripePaymentGateway(StripeClient stripeClient, MailService mailService) {
+        this.client = stripeClient;
+        this.mailService = mailService;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class StripePaymentGateway implements PaymentGatewayService {
                 .setReturnUrl("https://test.com")
                 .build();
         createPaymentIntent(params);
-        // TODO: notify user via email
+        sendEmail(paymentDetails);
     }
 
     private void createPaymentIntent(PaymentIntentCreateParams params) {
@@ -42,6 +44,18 @@ public class StripePaymentGateway implements PaymentGatewayService {
         } catch (StripeException e) {
             logger.error("Stripe payment intent creation failed, error: {}", e.getMessage());
             throw new RuntimeException("Payment processing failed", e);
+        }
+    }
+
+    private void sendEmail(PaymentDetails paymentDetails) {
+        try {
+            mailService.send(
+                    paymentDetails.email(),
+                    "Payment confirmation",
+                    "Your payment of $" + paymentDetails.amount() + " has been processed successfully!"
+            );
+        } catch (Exception e) {
+            logger.error("Failed to send payment confirmation email, error: {}", e.getMessage());
         }
     }
 }

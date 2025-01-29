@@ -6,7 +6,7 @@ import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.rental.application.ports.PaymentGatewayService;
+import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
@@ -271,7 +271,7 @@ class RentalServiceTest {
             rental.setTotalCost(BigDecimal.valueOf(100));
             PayRentalInput input = new PayRentalInput(rental.getId());
             when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
-            doNothing().when(paymentGatewayService).processPayment(new PaymentDetails(BigDecimal.valueOf(100)));
+            doNothing().when(paymentGatewayService).processPayment(new PaymentDetails(BigDecimal.valueOf(100), rental.getUser().getEmail()));
 
             // Act
             sut.payRental(input);

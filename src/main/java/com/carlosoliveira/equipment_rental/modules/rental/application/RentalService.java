@@ -7,7 +7,7 @@ import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.rental.application.ports.PaymentGatewayService;
+import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
@@ -55,8 +55,6 @@ public class RentalService {
                 .totalCost(totalCost)
                 .build();
 
-        // TODO: Publish the rental created event (event-driven)
-
         rentalRepository.save(rental);
     }
 
@@ -72,9 +70,6 @@ public class RentalService {
         rental.setReturnDate(LocalDateTime.now());
         rental.setLateFees(rental.calculateLateFees());
         rentalRepository.save(rental);
-
-        // TODO: Publish the rental returned event (event-driven)
-
         return rental;
     }
 
@@ -87,7 +82,7 @@ public class RentalService {
         }
 
         try {
-            PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost());
+            PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost(), rental.getUser().getEmail());
             paymentGatewayService.processPayment(paymentDetails);
         } catch (Exception e) {
             throw new PaymentProcessingException();

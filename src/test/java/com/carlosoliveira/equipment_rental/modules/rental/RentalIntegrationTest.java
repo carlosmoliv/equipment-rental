@@ -3,7 +3,8 @@ package com.carlosoliveira.equipment_rental.modules.rental;
 import com.carlosoliveira.equipment_rental.helpers.AuthTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.EquipmentTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.UserTestHelper;
-import com.carlosoliveira.equipment_rental.modules.user.presenters.dtos.CreateRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.CreateRentalDto;
+import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import jakarta.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -52,11 +54,8 @@ public class RentalIntegrationTest {
     @Autowired
     private AuthTestHelper authTestHelper;
 
-    Long equipmentId;
-    Long userId;
-    LocalDateTime startDate;
-    LocalDateTime endDate;
     CreateRentalDto createRentalDto;
+    HttpHeaders authHeaders;
 
     @DynamicPropertySource
     static void setDataSourceProperties(DynamicPropertyRegistry registry) {
@@ -64,22 +63,23 @@ public class RentalIntegrationTest {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("stripe.secret-key", () -> "test-secret-key");
     }
 
     @BeforeAll
     void setup() {
-        equipmentId = equipmentTestHelper.createEquipment();
-        userId = userTestHelper.createUser();
-        startDate = LocalDateTime.now().plusDays(1);
-        endDate = startDate.plusHours(5);
-        createRentalDto = new CreateRentalDto(userId, equipmentId, startDate, endDate);
+        authHeaders = authTestHelper.getHeadersWithAuth();
+        Long equipmentId = equipmentTestHelper.createEquipment();
+        Long customerId = userTestHelper.createUser(Role.CUSTOMER).getId();
+        LocalDateTime startDate = LocalDateTime.now().plusDays(1);
+        createRentalDto = new CreateRentalDto(customerId, equipmentId, startDate, startDate.plusHours(5));
     }
 
     @Test
     void rental_is_created_when_valid_data_is_provided() {
-        HttpEntity<CreateRentalDto> equipmentDto = new HttpEntity<>(createRentalDto, authTestHelper.getHeadersWithAuth());
+        HttpEntity<CreateRentalDto> httpEntity = new HttpEntity<>(createRentalDto, authHeaders);
 
-        ResponseEntity<String> response = restTemplate.postForEntity("/api/rentals", equipmentDto, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity("/api/rentals", httpEntity, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }

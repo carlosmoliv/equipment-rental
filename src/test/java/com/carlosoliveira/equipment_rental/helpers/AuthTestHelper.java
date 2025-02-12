@@ -1,7 +1,8 @@
 package com.carlosoliveira.equipment_rental.helpers;
 
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
+import com.carlosoliveira.equipment_rental.modules.user.domain.User;
+import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import com.github.javafaker.Faker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -14,7 +15,11 @@ public class AuthTestHelper {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    private final Faker faker = new Faker();
+
+    @Autowired
+    private UserTestHelper userTestHelper;
+
+    Faker faker = new Faker();
 
     public HttpHeaders getHeadersWithAuth() {
         HttpHeaders headers = new HttpHeaders();
@@ -23,15 +28,9 @@ public class AuthTestHelper {
     }
 
     private String getAccessToken() {
-        String password = "pass123";
-        String email = faker.internet().emailAddress();
-        signUp(email, password);
-        return signIn(email, password);
-    }
-
-    private void signUp(String email, String password) {
-        SignUpDto signUpDto = new SignUpDto(faker.name().firstName(), faker.name().lastName(), email, faker.phoneNumber().toString(), password, password);
-        restTemplate.postForEntity("/api/authentication/sign-up", signUpDto, String.class);
+        String password = faker.internet().password();
+        User adminUser = userTestHelper.createUser(Role.ADMIN, password);
+        return signIn(adminUser.getEmail(), password);
     }
 
     private String signIn(String email, String password) {

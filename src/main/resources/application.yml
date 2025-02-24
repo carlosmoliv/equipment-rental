@@ -7,9 +7,9 @@ spring:
     name: equipment-rental
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/equipment-rental
-    username: equipment-rental
-    password: pass123
+    url: ${DB_HOST}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update

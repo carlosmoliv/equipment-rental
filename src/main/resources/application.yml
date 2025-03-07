@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${PORT:8081}
 spring:
   config:
     import: optional:classpath:env.properties
@@ -7,7 +7,7 @@ spring:
     name: equipment-rental
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_HOST}
+    url: ${DB_HOST:jdbc:postgresql://localhost:5432/equipment-rental}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
   jpa:

@@ -9,9 +9,9 @@ import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -39,17 +39,14 @@ public class AuthenticationService {
         userRepository.save(user);
     }
 
-
     public String login(SignInInput signInInput) {
         Optional<User> user = userRepository.findByEmail(signInInput.email());
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found.");
         }
-
         if (!hashingService.matches(signInInput.password(), user.get().getPassword())) {
-            throw new BadCredentialsException("Invalid credentials.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
-
         return tokenService.generate(user.get());
     }
 }

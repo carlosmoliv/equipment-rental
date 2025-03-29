@@ -30,7 +30,7 @@ public class RentalService {
     private final UserRepository userRepository;
     private final PaymentGatewayService paymentGatewayService;
 
-    public void create(CreateRentalInput input) {
+    public Rental create(CreateRentalInput input) {
         Equipment equipment = equipmentRepository.findById(input.equipmentId())
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
         if (!isEquipmentAvailable(equipment, input.startDate(), input.endDate())) {
@@ -43,8 +43,7 @@ public class RentalService {
             throw new IllegalStateException("User has reached the rental limit");
         }
 
-        BigDecimal totalCost = equipment
-                .calculateCost(Duration.between(input.startDate(), input.endDate()).toHours());
+        BigDecimal totalCost = equipment.calculateCost(Duration.between(input.startDate(), input.endDate()).toHours());
 
         Rental rental = Rental.builder()
                 .status(RentalStatus.PENDING)
@@ -55,7 +54,7 @@ public class RentalService {
                 .totalCost(totalCost)
                 .build();
 
-        rentalRepository.save(rental);
+       return rentalRepository.save(rental);
     }
 
     public Rental returnRental(Long rentalId) {

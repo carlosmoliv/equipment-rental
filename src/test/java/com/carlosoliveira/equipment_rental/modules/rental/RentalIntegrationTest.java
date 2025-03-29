@@ -3,6 +3,7 @@ package com.carlosoliveira.equipment_rental.modules.rental;
 import com.carlosoliveira.equipment_rental.helpers.AuthTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.EquipmentTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.UserTestHelper;
+import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.CreateRentalDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import jakarta.transaction.Transactional;
@@ -56,6 +57,8 @@ public class RentalIntegrationTest {
 
     CreateRentalDto createRentalDto;
     HttpHeaders authHeaders;
+    Long equipmentId;
+    Long customerId;
 
     @DynamicPropertySource
     static void setDataSourceProperties(DynamicPropertyRegistry registry) {
@@ -69,8 +72,8 @@ public class RentalIntegrationTest {
     @BeforeAll
     void setup() {
         authHeaders = authTestHelper.getHeadersWithAuth();
-        Long equipmentId = equipmentTestHelper.createEquipment();
-        Long customerId = userTestHelper.createUser(Role.CUSTOMER).getId();
+        equipmentId = equipmentTestHelper.createEquipment();
+        customerId = userTestHelper.createUser(Role.CUSTOMER).getId();
         LocalDateTime startDate = LocalDateTime.now().plusDays(1);
         createRentalDto = new CreateRentalDto(customerId, equipmentId, startDate, startDate.plusHours(5));
     }
@@ -82,5 +85,35 @@ public class RentalIntegrationTest {
         ResponseEntity<String> response = restTemplate.postForEntity("/api/rentals", httpEntity, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void return_rental_succeeds_when_valid() {
+        // Arrange
+        LocalDateTime startDate = LocalDateTime.now().plusDays(1);
+        CreateRentalDto createRentalDto = new CreateRentalDto(
+                customerId,
+                equipmentId,
+                startDate,
+                startDate.plusHours(5)
+        );
+        ResponseEntity<Rental> createResponse = restTemplate.postForEntity(
+                "/api/rentals",
+                new HttpEntity<>(createRentalDto, authHeaders),
+                Rental.class
+        );
+
+        Long rentalId = createResponse.getBody().getId();
+        HttpEntity<Void> httpEntity = new HttpEntity<>(authHeaders);
+
+        // Act
+        ResponseEntity<Rental> returnResponse = restTemplate.postForEntity(
+                "/api/rentals/" + rentalId + "/return",
+                httpEntity,
+                Rental.class
+        );
+
+        // Assert
+        assertThat(returnResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

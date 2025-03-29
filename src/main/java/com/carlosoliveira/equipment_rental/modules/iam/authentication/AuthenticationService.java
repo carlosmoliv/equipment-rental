@@ -1,6 +1,5 @@
 package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignInInput;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
 import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
@@ -26,7 +25,7 @@ public class AuthenticationService {
     public void signUp(SignUpInput signUpInput) {
         Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
         if (userExists.isPresent()) {
-            throw new EmailAlreadyInUseException("Email already in use.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use.");
         }
         User user = User.builder()
                 .email(signUpInput.email())
@@ -35,7 +34,6 @@ public class AuthenticationService {
                 .password(hashingService.encode(signUpInput.password()))
                 .role(Role.CUSTOMER)
                 .build();
-
         userRepository.save(user);
     }
 

@@ -5,9 +5,10 @@ import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositor
 import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class EquipmentService {
     public Long create(CreateEquipmentInput input) {
         Optional<EquipmentCategory> category = categoryEquipmentRepository.findById(input.categoryId());
         if (category.isEmpty()) {
-            throw new EntityNotFoundException();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found.");
         }
         Equipment equipment = Equipment.builder()
                 .name(input.name())

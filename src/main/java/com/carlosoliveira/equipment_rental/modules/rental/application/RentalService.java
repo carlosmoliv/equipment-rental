@@ -61,9 +61,9 @@ public class RentalService {
         Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new IllegalArgumentException("Rental not found"));
 
-//        if (rental.getStatus() != RentalStatus.ONGOING) {
-//            throw new IllegalStateException("Only ongoing rentals can be returned");
-//        }
+        if (rental.getStatus() != RentalStatus.ONGOING) {
+            throw new IllegalStateException("Only ongoing rentals can be returned");
+        }
 
         rental.setStatus(RentalStatus.COMPLETED);
         rental.setReturnDate(LocalDateTime.now());
@@ -87,7 +87,7 @@ public class RentalService {
             throw new PaymentProcessingException();
         }
 
-        rental.setStatus(RentalStatus.PAID);
+        rental.setStatus(RentalStatus.ONGOING);
         rentalRepository.save(rental);
     }
 

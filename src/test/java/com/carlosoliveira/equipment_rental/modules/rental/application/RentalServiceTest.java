@@ -281,7 +281,7 @@ class RentalServiceTest {
                     details.amount().equals(rental.getTotalCost())
             ));
             verify(rentalRepository).save(argThat(r ->
-                    r.getStatus() == RentalStatus.PAID));
+                    r.getStatus() == RentalStatus.ONGOING));
         }
 
         @Test

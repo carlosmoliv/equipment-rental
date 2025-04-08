@@ -2,8 +2,6 @@ package com.carlosoliveira.equipment_rental.modules.rental.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
-import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentProcessingException;
-import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentStatusException;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
@@ -11,11 +9,15 @@ import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGa
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
+import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.PaymentResponseDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
+import com.stripe.model.PaymentIntent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -72,23 +74,20 @@ public class RentalService {
         return rental;
     }
 
-    public void payRental(PayRentalInput input) {
+    public PaymentResponseDto payRental(PayRentalInput input) {
         Rental rental = rentalRepository.findById(input.rentalId())
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
 
         if (rental.getStatus() != RentalStatus.PENDING) {
-            throw new PaymentStatusException();
-        }
-
-        try {
-            PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost(), rental.getUser().getEmail());
-            paymentGatewayService.processPayment(paymentDetails);
-        } catch (Exception e) {
-            throw new PaymentProcessingException();
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only PENDING rental can be paid.");
         }
 
         rental.setStatus(RentalStatus.ONGOING);
         rentalRepository.save(rental);
+
+        PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost(), rental.getUser().getEmail(), input.creditCardToken());
+        PaymentIntent paymentIntent =  paymentGatewayService.processPayment(paymentDetails);
+        return new PaymentResponseDto(paymentIntent.getId(), paymentIntent.getStatus());
     }
 
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {

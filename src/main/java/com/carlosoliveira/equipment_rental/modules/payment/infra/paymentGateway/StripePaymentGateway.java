@@ -5,6 +5,7 @@ import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.Pay
 import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import com.stripe.param.PaymentIntentCreateParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,23 +25,23 @@ public class StripePaymentGateway implements PaymentGatewayService {
     }
 
     @Override
-    public void processPayment(PaymentDetails paymentDetails) {
+    public PaymentIntent processPayment(PaymentDetails paymentDetails) {
         long amountInCents = paymentDetails.amount().multiply(BigDecimal.valueOf(100)).longValue();
-        PaymentIntentCreateParams params = PaymentIntentCreateParams
-                .builder()
+        PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                 .setAmount(amountInCents)
-                .setConfirm(true)
                 .setCurrency("usd")
-                .setPaymentMethod("pm_card_visa")
-                .setReturnUrl("https://test.com")
+                .setPaymentMethod(paymentDetails.creditCardToken())
+                .setConfirm(true)
+                .setReturnUrl("https://google.com")
                 .build();
-        createPaymentIntent(params);
+        PaymentIntent paymentIntent = createPaymentIntent(params);
         sendEmail(paymentDetails);
+        return paymentIntent;
     }
 
-    private void createPaymentIntent(PaymentIntentCreateParams params) {
+    private PaymentIntent createPaymentIntent(PaymentIntentCreateParams params) {
         try {
-            this.client.paymentIntents().create(params);
+            return this.client.paymentIntents().create(params);
         } catch (StripeException e) {
             logger.error("Stripe payment intent creation failed, error: {}", e.getMessage());
             throw new RuntimeException("Payment processing failed", e);

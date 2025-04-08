@@ -5,6 +5,8 @@ import com.carlosoliveira.equipment_rental.modules.rental.application.RentalServ
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.CreateRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.PayRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.PaymentResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,9 +41,9 @@ public class RentalController {
     }
 
     @PostMapping("/{rentalId}/pay")
-    public ResponseEntity<Void> payRental(@PathVariable Long rentalId) {
-        PayRentalInput input = new PayRentalInput(rentalId);
-        rentalService.payRental(input);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<PaymentResponseDto> payRental(@PathVariable Long rentalId, @RequestBody PayRentalDto dto) {
+        PayRentalInput input = new PayRentalInput(rentalId, dto.creditCardToken());
+        PaymentResponseDto paymentResponseDto = rentalService.payRental(input);
+        return ResponseEntity.ok(paymentResponseDto);
     }
 }

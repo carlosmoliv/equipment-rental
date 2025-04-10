@@ -1,8 +1,8 @@
-package com.carlosoliveira.equipment_rental.modules.equipment.application;
+package com.carlosoliveira.equipment_rental.modules.equipment.services;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.application.inputs.CreateEquipmentInput;
-import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.dtos.CreateEquipmentDto;
+import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
 import lombok.RequiredArgsConstructor;
@@ -19,19 +19,19 @@ public class EquipmentService {
     private final EquipmentRepository equipmentRepository;
     private final EquipmentCategoryRepository categoryEquipmentRepository;
 
-    public Long create(CreateEquipmentInput input) {
-        Optional<EquipmentCategory> category = categoryEquipmentRepository.findById(input.categoryId());
+    public Long create(CreateEquipmentDto dto) {
+        Optional<EquipmentCategory> category = categoryEquipmentRepository.findById(dto.categoryId());
         if (category.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found.");
         }
         Equipment equipment = Equipment.builder()
-                .name(input.name())
-                .description(input.description())
-                .pricePerDay(input.pricePerDay())
-                .available(input.available())
+                .name(dto.name())
+                .description(dto.description())
+                .pricePerDay(dto.pricePerDay())
+                .available(dto.available())
                 .category(category.get())
-                .lateFeeRate(input.lateFeeRate())
-                .hourlyRate(input.hourlyRate())
+                .lateFeeRate(dto.lateFeeRate())
+                .hourlyRate(dto.hourlyRate())
                 .build();
         return equipmentRepository.save(equipment).getId();
     }

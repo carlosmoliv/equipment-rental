@@ -1,6 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.rental.infra.repositories;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;

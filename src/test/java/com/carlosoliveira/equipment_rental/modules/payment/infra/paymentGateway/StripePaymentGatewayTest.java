@@ -40,7 +40,7 @@ class StripePaymentGatewayTest {
     @Test
     public void process_payment_creates_a_payment_intent() throws StripeException {
         // Arrange
-        PaymentDetails paymentDetails = new PaymentDetails(BigDecimal.valueOf(50.0), "test@email.com");
+        PaymentDetails paymentDetails = new PaymentDetails(BigDecimal.valueOf(50.0), "test@email.com", "any_credit_card_token");
         PaymentIntent mockPaymentIntent = new PaymentIntent();
         when(paymentIntentService.create(any(PaymentIntentCreateParams.class))).thenReturn(mockPaymentIntent);
 

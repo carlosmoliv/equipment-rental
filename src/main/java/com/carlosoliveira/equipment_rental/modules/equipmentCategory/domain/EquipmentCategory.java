@@ -1,6 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,6 @@ public class EquipmentCategory {
     private String name;
 
     @OneToMany(mappedBy = "category")
+    @JsonBackReference
     private List<Equipment> equipments;
 }

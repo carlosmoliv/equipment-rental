@@ -1,7 +1,8 @@
-package com.carlosoliveira.equipment_rental.modules.equipment.domain;
+package com.carlosoliveira.equipment_rental.modules.equipment.entities;
 
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +38,7 @@ public class Equipment {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
+    @JsonManagedReference
     private EquipmentCategory category;
 
     @ToString.Exclude

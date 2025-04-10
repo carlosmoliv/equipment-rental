@@ -1,7 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.rental.application;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
-import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;

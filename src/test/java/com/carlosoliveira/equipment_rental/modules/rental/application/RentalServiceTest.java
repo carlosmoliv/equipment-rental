@@ -1,7 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.rental.application;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
-import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
 import com.carlosoliveira.equipment_rental.modules.rental.application.exceptions.PaymentStatusException;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
@@ -269,9 +269,9 @@ class RentalServiceTest {
             // Arrange
             rental.setStatus(RentalStatus.PENDING);
             rental.setTotalCost(BigDecimal.valueOf(100));
-            PayRentalInput input = new PayRentalInput(rental.getId());
+            PayRentalInput input = new PayRentalInput(rental.getId(), "any_credit_card_token");
             when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
-            doNothing().when(paymentGatewayService).processPayment(new PaymentDetails(BigDecimal.valueOf(100), rental.getUser().getEmail()));
+            doNothing().when(paymentGatewayService).processPayment(new PaymentDetails(BigDecimal.valueOf(100), rental.getUser().getEmail(), "any_credit_card_token"));
 
             // Act
             sut.payRental(input);
@@ -287,7 +287,7 @@ class RentalServiceTest {
         @Test
         void rental_payment_fails_when_rental_is_not_found() {
             // Arrange
-            PayRentalInput input = new PayRentalInput(999L);
+            PayRentalInput input = new PayRentalInput(999L, "any_credit_card_token");
             when(rentalRepository.findById(999L)).thenReturn(Optional.empty());
 
             // Act & Assert
@@ -301,7 +301,7 @@ class RentalServiceTest {
         void rental_payment_fails_when_rental_is_not_pending() {
             // Arrange
             rental.setStatus(RentalStatus.COMPLETED);
-            PayRentalInput input = new PayRentalInput(rental.getId());
+            PayRentalInput input = new PayRentalInput(rental.getId(), "any_credit_card_token");
             when(rentalRepository.findById(rental.getId())).thenReturn(Optional.of(rental));
 
             // Act & Assert

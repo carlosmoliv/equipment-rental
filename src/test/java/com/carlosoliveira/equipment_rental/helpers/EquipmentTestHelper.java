@@ -1,6 +1,7 @@
 package com.carlosoliveira.equipment_rental.helpers;
 
-import com.carlosoliveira.equipment_rental.modules.equipment.application.EquipmentService;
+import com.carlosoliveira.equipment_rental.modules.equipment.dtos.CreateEquipmentDto;
+import com.carlosoliveira.equipment_rental.modules.equipment.services.EquipmentService;
 import com.carlosoliveira.equipment_rental.modules.equipment.application.inputs.CreateEquipmentInput;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.application.EquipmentCategoryService;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.application.inputs.CreateEquipmentCategoryInput;
@@ -21,7 +22,7 @@ public class EquipmentTestHelper {
     public Long createEquipment() {
         Faker faker = new Faker();
         Long categoryId = equipmentCategoryService.create(new CreateEquipmentCategoryInput("Electronics"));
-        CreateEquipmentInput input = new CreateEquipmentInput(
+        CreateEquipmentDto dto = new CreateEquipmentDto(
                 faker.commerce().productName(),
                 faker.lorem().paragraph(3),
                 BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
@@ -30,7 +31,6 @@ public class EquipmentTestHelper {
                 BigDecimal.valueOf(faker.number().randomDouble(2, 50, 1000)),
                 BigDecimal.valueOf(faker.number().randomDouble(2, 1, 20))
         );
-        return equipmentService.create(input);
-
+        return equipmentService.create(dto);
     }
 }

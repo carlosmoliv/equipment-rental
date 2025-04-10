@@ -1,8 +1,9 @@
 package com.carlosoliveira.equipment_rental.modules.equipment.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.application.inputs.CreateEquipmentInput;
-import com.carlosoliveira.equipment_rental.modules.equipment.infra.jpa.repositories.EquipmentRepository;
-import com.carlosoliveira.equipment_rental.modules.equipment.domain.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
+import com.carlosoliveira.equipment_rental.modules.equipment.services.EquipmentService;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
 import com.github.javafaker.Faker;

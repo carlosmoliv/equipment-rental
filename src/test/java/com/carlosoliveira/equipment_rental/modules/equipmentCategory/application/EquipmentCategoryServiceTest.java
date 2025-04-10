@@ -1,8 +1,9 @@
 package com.carlosoliveira.equipment_rental.modules.equipmentCategory.application;
 
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.application.inputs.CreateEquipmentCategoryInput;
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.inputs.CreateEquipmentCategoryInput;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.entities.EquipmentCategory;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.repositories.EquipmentCategoryRepository;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.services.EquipmentCategoryService;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

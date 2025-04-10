@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain;
+package com.carlosoliveira.equipment_rental.modules.equipmentCategory.entities;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
 import com.fasterxml.jackson.annotation.JsonBackReference;

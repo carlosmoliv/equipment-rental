@@ -1,8 +1,8 @@
-package com.carlosoliveira.equipment_rental.modules.equipmentCategory.application;
+package com.carlosoliveira.equipment_rental.modules.equipmentCategory.services;
 
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.application.inputs.CreateEquipmentCategoryInput;
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.domain.EquipmentCategory;
-import com.carlosoliveira.equipment_rental.modules.equipmentCategory.infra.jpa.repositories.EquipmentCategoryRepository;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.dtos.CreateEquipmentCategoryDto;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.entities.EquipmentCategory;
+import com.carlosoliveira.equipment_rental.modules.equipmentCategory.repositories.EquipmentCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,9 @@ public class EquipmentCategoryService {
 
     private final EquipmentCategoryRepository equipmentCategoryRepository;
 
-    public Long create(CreateEquipmentCategoryInput input) {
+    public Long create(CreateEquipmentCategoryDto dto) {
         EquipmentCategory category = EquipmentCategory.builder()
-                .name(input.name())
+                .name(dto.name())
                 .build();
         return equipmentCategoryRepository.save(category).getId();
     }

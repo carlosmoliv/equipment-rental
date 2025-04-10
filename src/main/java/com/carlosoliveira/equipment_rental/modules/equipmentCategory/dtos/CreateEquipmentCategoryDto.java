@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.equipmentCategory.presenters.dtos;
+package com.carlosoliveira.equipment_rental.modules.equipmentCategory.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 public record CreateEquipmentCategoryDto (

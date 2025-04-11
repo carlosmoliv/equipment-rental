@@ -2,6 +2,7 @@ package com.carlosoliveira.equipment_rental.modules.iam.token;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.carlosoliveira.equipment_rental.modules.iam.services.TokenService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class JwtTokenProviderTest {
 
-    private JwtTokenProvider jwtTokenProvider;
+    private TokenService jwtTokenProvider;
 
     @Mock
     private User user;
@@ -23,7 +24,7 @@ class JwtTokenProviderTest {
     void setUp() {
         String secretKey = "414b1e7fe1ef832cd7196281557014f704bef678dbfa1c968129fcf97cb12555";
         long expirationTime = 86400000;
-        jwtTokenProvider = new JwtTokenProvider(secretKey, expirationTime);
+        jwtTokenProvider = new TokenService(secretKey, expirationTime);
     }
 
     @Test

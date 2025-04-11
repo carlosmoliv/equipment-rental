@@ -1,6 +1,5 @@
-package com.carlosoliveira.equipment_rental.modules.iam.token;
+package com.carlosoliveira.equipment_rental.modules.iam.services;
 
-import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 
 import io.jsonwebtoken.*;
@@ -14,19 +13,18 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
-public class JwtTokenProvider implements TokenService {
+public class TokenService {
 
     private final String secretKey;
     private final long expirationTime;
 
-    public JwtTokenProvider(
+    public TokenService(
             @Value("${jwt.secret}") String secretKey,
             @Value("${jwt.expiration}") long expirationTime) {
         this.secretKey = secretKey;
         this.expirationTime = expirationTime;
     }
 
-    @Override
     public String generate(User user) {
         return Jwts.builder()
                 .subject(user.getEmail())
@@ -36,7 +34,6 @@ public class JwtTokenProvider implements TokenService {
                 .compact();
     }
 
-    @Override
     public boolean validate(String token) {
         try {
             extractAllClaims(token);
@@ -46,7 +43,6 @@ public class JwtTokenProvider implements TokenService {
         }
     }
 
-    @Override
     public String getEmailFromToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }

@@ -1,6 +1,6 @@
 package com.carlosoliveira.equipment_rental.helpers;
 
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
+import com.carlosoliveira.equipment_rental.modules.iam.dtos.SignInDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import com.github.javafaker.Faker;

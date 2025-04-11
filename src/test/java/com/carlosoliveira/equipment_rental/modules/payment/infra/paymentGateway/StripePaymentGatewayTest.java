@@ -1,6 +1,5 @@
 package com.carlosoliveira.equipment_rental.modules.payment.infra.paymentGateway;
 
-import com.carlosoliveira.equipment_rental.modules.notification.application.ports.MailService;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;

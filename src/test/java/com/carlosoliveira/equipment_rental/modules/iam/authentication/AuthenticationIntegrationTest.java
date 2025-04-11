@@ -1,7 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignInDto;
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos.SignUpDto;
+import com.carlosoliveira.equipment_rental.modules.iam.dtos.SignInDto;
+import com.carlosoliveira.equipment_rental.modules.iam.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
@@ -22,7 +22,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;

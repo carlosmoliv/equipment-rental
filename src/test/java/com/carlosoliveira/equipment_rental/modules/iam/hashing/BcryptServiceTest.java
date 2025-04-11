@@ -1,5 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.iam.hashing;
 
+import com.carlosoliveira.equipment_rental.modules.iam.services.HashingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +19,7 @@ class BcryptServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private BcryptService bcryptService;
+    private HashingService bcryptService;
 
     @Test
     void should_encode_password() {

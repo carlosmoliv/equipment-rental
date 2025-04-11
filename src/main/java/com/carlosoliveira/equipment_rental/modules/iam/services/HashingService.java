@@ -1,24 +1,21 @@
-package com.carlosoliveira.equipment_rental.modules.iam.hashing;
+package com.carlosoliveira.equipment_rental.modules.iam.services;
 
-import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BcryptService implements HashingService {
+public class HashingService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public BcryptService(PasswordEncoder passwordEncoder) {
+    public HashingService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Override
     public String encode(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
 
-    @Override
     public boolean matches(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }

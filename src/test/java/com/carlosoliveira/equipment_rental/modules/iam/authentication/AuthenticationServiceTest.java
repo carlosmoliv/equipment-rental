@@ -1,10 +1,9 @@
 package com.carlosoliveira.equipment_rental.modules.iam.authentication;
 
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.exceptions.EmailAlreadyInUseException;
+import com.carlosoliveira.equipment_rental.modules.iam.exceptions.EmailAlreadyInUseException;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignInInput;
 import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
-import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
-import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
+import com.carlosoliveira.equipment_rental.modules.iam.services.AuthenticationService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

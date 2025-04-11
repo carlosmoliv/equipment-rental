@@ -1,9 +1,7 @@
-package com.carlosoliveira.equipment_rental.modules.iam.authentication;
+package com.carlosoliveira.equipment_rental.modules.iam.services;
 
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignInInput;
-import com.carlosoliveira.equipment_rental.modules.iam.authentication.inputs.SignUpInput;
-import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
-import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
+import com.carlosoliveira.equipment_rental.modules.iam.dtos.SignInDto;
+import com.carlosoliveira.equipment_rental.modules.iam.dtos.SignUpDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
@@ -22,27 +20,27 @@ public class AuthenticationService {
     private final HashingService hashingService;
     private final TokenService tokenService;
 
-    public void signUp(SignUpInput signUpInput) {
-        Optional<User> userExists = userRepository.findByEmail(signUpInput.email());
+    public void signUp(SignUpDto dto) {
+        Optional<User> userExists = userRepository.findByEmail(dto.email());
         if (userExists.isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use.");
         }
         User user = User.builder()
-                .email(signUpInput.email())
-                .firstName(signUpInput.firstName())
-                .lastName(signUpInput.lastName())
-                .password(hashingService.encode(signUpInput.password()))
+                .email(dto.email())
+                .firstName(dto.firstName())
+                .lastName(dto.lastName())
+                .password(hashingService.encode(dto.password()))
                 .role(Role.CUSTOMER)
                 .build();
         userRepository.save(user);
     }
 
-    public String login(SignInInput signInInput) {
-        Optional<User> user = userRepository.findByEmail(signInInput.email());
+    public String login(SignInDto dto) {
+        Optional<User> user = userRepository.findByEmail(dto.email());
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found.");
         }
-        if (!hashingService.matches(signInInput.password(), user.get().getPassword())) {
+        if (!hashingService.matches(dto.password(), user.get().getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
         return tokenService.generate(user.get());

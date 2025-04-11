@@ -1,6 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.iam.config;
 
-import com.carlosoliveira.equipment_rental.modules.iam.ports.TokenService;
+import com.carlosoliveira.equipment_rental.modules.iam.services.TokenService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import com.carlosoliveira.equipment_rental.modules.user.domain.SecurityUser;

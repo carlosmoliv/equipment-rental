@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.iam.authentication.exceptions;
+package com.carlosoliveira.equipment_rental.modules.iam.exceptions;
 
 public class EmailAlreadyInUseException extends RuntimeException {
     public EmailAlreadyInUseException(String message) {

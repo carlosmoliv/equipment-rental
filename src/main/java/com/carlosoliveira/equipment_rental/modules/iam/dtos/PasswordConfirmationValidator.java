@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.iam.authentication.dtos;
+package com.carlosoliveira.equipment_rental.modules.iam.dtos;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

@@ -1,6 +1,5 @@
  package com.carlosoliveira.equipment_rental.helpers;
 
-import com.carlosoliveira.equipment_rental.modules.iam.ports.HashingService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;

@@ -1,5 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.payment.infra.paymentGateway;
 
+import com.carlosoliveira.equipment_rental.modules.payment.services.PaymentGateway;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
@@ -28,12 +29,12 @@ class StripePaymentGatewayTest {
     @Mock
     private MailService emailService;
 
-    private StripePaymentGateway sut;
+    private PaymentGateway sut;
 
     @BeforeEach
     void setUp() {
         when(stripeClient.paymentIntents()).thenReturn(paymentIntentService);
-        sut = new StripePaymentGateway(stripeClient, emailService);
+        sut = new PaymentGateway(stripeClient, emailService);
     }
 
     @Test

@@ -2,10 +2,10 @@ package com.carlosoliveira.equipment_rental.modules.rental.application;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
+import com.carlosoliveira.equipment_rental.modules.payment.services.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
 import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
@@ -46,7 +46,6 @@ public class RentalService {
         }
 
         BigDecimal totalCost = equipment.calculateCost(Duration.between(input.startDate(), input.endDate()).toHours());
-
         Rental rental = Rental.builder()
                 .status(RentalStatus.PENDING)
                 .equipment(equipment)
@@ -79,7 +78,7 @@ public class RentalService {
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
 
         if (rental.getStatus() != RentalStatus.PENDING) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only PENDING rental can be paid.");
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Only PENDING rentals can be paid.");
         }
 
         rental.setStatus(RentalStatus.ONGOING);
@@ -89,7 +88,7 @@ public class RentalService {
         PaymentIntent paymentIntent =  paymentGatewayService.processPayment(paymentDetails);
         return new PaymentResponseDto(paymentIntent.getId(), paymentIntent.getStatus());
     }
-
+    
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
         List<Rental> equipments = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
         return equipments.isEmpty();

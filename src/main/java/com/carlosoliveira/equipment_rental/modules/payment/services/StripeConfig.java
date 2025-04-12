@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.payment.infra.paymentGateway;
+package com.carlosoliveira.equipment_rental.modules.payment.services;
 
 import com.stripe.StripeClient;
 import org.springframework.beans.factory.annotation.Value;

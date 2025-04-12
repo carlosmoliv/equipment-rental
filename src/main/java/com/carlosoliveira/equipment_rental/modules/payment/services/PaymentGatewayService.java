@@ -1,8 +1,7 @@
-package com.carlosoliveira.equipment_rental.modules.payment.infra.paymentGateway;
+package com.carlosoliveira.equipment_rental.modules.payment.services;
 
 import com.carlosoliveira.equipment_rental.modules.notification.services.MailService;
 import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.payment.application.PaymentGatewayService;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -14,17 +13,16 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-public class StripePaymentGateway implements PaymentGatewayService {
-    private static final Logger logger = LoggerFactory.getLogger(StripePaymentGateway.class);
+public class PaymentGatewayService {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentGatewayService.class);
     private final StripeClient client;
     private final MailService mailService;
 
-    public StripePaymentGateway(StripeClient stripeClient, MailService mailService) {
+    public PaymentGatewayService(StripeClient stripeClient, MailService mailService) {
         this.client = stripeClient;
         this.mailService = mailService;
     }
 
-    @Override
     public PaymentIntent processPayment(PaymentDetails paymentDetails) {
         long amountInCents = paymentDetails.amount().multiply(BigDecimal.valueOf(100)).longValue();
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()

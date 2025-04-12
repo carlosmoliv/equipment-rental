@@ -1,7 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.payment.services;
 
 import com.carlosoliveira.equipment_rental.modules.notification.services.MailService;
-import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.PaymentDetails;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;

@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.rental.application.inputs;
+package com.carlosoliveira.equipment_rental.modules.rental.dtos;
 
 import java.math.BigDecimal;
 

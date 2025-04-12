@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.rental.application.exceptions;
+package com.carlosoliveira.equipment_rental.modules.rental.exceptions;
 
 public class PaymentStatusException extends RuntimeException {
     public PaymentStatusException() {

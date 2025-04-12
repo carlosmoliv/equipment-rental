@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.rental.domain.enums;
+package com.carlosoliveira.equipment_rental.modules.rental.enums;
 
 public enum RentalStatus {
     PENDING,

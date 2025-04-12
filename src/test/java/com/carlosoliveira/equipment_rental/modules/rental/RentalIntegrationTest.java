@@ -3,8 +3,8 @@ package com.carlosoliveira.equipment_rental.modules.rental;
 import com.carlosoliveira.equipment_rental.helpers.AuthTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.EquipmentTestHelper;
 import com.carlosoliveira.equipment_rental.helpers.UserTestHelper;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
-import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.CreateRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.entities.Rental;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.CreateRentalDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.enums.Role;
 import jakarta.transaction.Transactional;
 

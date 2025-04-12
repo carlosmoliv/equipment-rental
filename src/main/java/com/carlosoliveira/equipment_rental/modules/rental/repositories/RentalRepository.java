@@ -1,8 +1,8 @@
-package com.carlosoliveira.equipment_rental.modules.rental.infra.repositories;
+package com.carlosoliveira.equipment_rental.modules.rental.repositories;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
+import com.carlosoliveira.equipment_rental.modules.rental.entities.Rental;
+import com.carlosoliveira.equipment_rental.modules.rental.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

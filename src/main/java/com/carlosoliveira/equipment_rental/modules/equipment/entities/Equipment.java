@@ -1,7 +1,7 @@
 package com.carlosoliveira.equipment_rental.modules.equipment.entities;
 
 import com.carlosoliveira.equipment_rental.modules.equipmentCategory.entities.EquipmentCategory;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
+import com.carlosoliveira.equipment_rental.modules.rental.entities.Rental;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;

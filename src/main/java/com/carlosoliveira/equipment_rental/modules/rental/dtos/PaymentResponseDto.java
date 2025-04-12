@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos;
+package com.carlosoliveira.equipment_rental.modules.rental.dtos;
 
 public record PaymentResponseDto (
         String paymentId,

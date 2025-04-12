@@ -1,7 +1,7 @@
-package com.carlosoliveira.equipment_rental.modules.rental.domain;
+package com.carlosoliveira.equipment_rental.modules.rental.entities;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
+import com.carlosoliveira.equipment_rental.modules.rental.enums.RentalStatus;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;

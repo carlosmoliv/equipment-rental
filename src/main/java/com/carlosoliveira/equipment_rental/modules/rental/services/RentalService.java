@@ -1,15 +1,15 @@
-package com.carlosoliveira.equipment_rental.modules.rental.application;
+package com.carlosoliveira.equipment_rental.modules.rental.services;
 
 import com.carlosoliveira.equipment_rental.modules.equipment.entities.Equipment;
 import com.carlosoliveira.equipment_rental.modules.equipment.repositories.EquipmentRepository;
 import com.carlosoliveira.equipment_rental.modules.payment.services.PaymentGatewayService;
-import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.CreateRentalInput;
-import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PayRentalInput;
-import com.carlosoliveira.equipment_rental.modules.rental.application.inputs.PaymentDetails;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.Rental;
-import com.carlosoliveira.equipment_rental.modules.rental.domain.enums.RentalStatus;
-import com.carlosoliveira.equipment_rental.modules.rental.infra.repositories.RentalRepository;
-import com.carlosoliveira.equipment_rental.modules.rental.presenters.dtos.PaymentResponseDto;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.CreateRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.PayRentalDto;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.PaymentDetails;
+import com.carlosoliveira.equipment_rental.modules.rental.entities.Rental;
+import com.carlosoliveira.equipment_rental.modules.rental.enums.RentalStatus;
+import com.carlosoliveira.equipment_rental.modules.rental.repositories.RentalRepository;
+import com.carlosoliveira.equipment_rental.modules.rental.dtos.PaymentResponseDto;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
 import com.stripe.model.PaymentIntent;
@@ -32,26 +32,26 @@ public class RentalService {
     private final UserRepository userRepository;
     private final PaymentGatewayService paymentGatewayService;
 
-    public Rental create(CreateRentalInput input) {
-        Equipment equipment = equipmentRepository.findById(input.equipmentId())
+    public Rental create(CreateRentalDto dto) {
+        Equipment equipment = equipmentRepository.findById(dto.equipmentId())
                 .orElseThrow(() -> new EntityNotFoundException("Equipment not found"));
-        if (!isEquipmentAvailable(equipment, input.startDate(), input.endDate())) {
+        if (!isEquipmentAvailable(equipment, dto.startDate(), dto.endDate())) {
             throw new IllegalStateException("Equipment is not available for the selected dates");
         }
 
-        User user = userRepository.findById(input.userId())
+        User user = userRepository.findById(dto.userId())
                 .orElseThrow(()  -> new EntityNotFoundException("User not found"));
         if (!canUserRent(user)) {
             throw new IllegalStateException("User has reached the rental limit");
         }
 
-        BigDecimal totalCost = equipment.calculateCost(Duration.between(input.startDate(), input.endDate()).toHours());
+        BigDecimal totalCost = equipment.calculateCost(Duration.between(dto.startDate(), dto.endDate()).toHours());
         Rental rental = Rental.builder()
                 .status(RentalStatus.PENDING)
                 .equipment(equipment)
                 .user(user)
-                .startDate(input.startDate())
-                .endDate(input.endDate())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
                 .totalCost(totalCost)
                 .build();
 
@@ -73,8 +73,8 @@ public class RentalService {
         return rental;
     }
 
-    public PaymentResponseDto payRental(PayRentalInput input) {
-        Rental rental = rentalRepository.findById(input.rentalId())
+    public PaymentResponseDto payRental(Long rentalId, PayRentalDto dto) {
+        Rental rental = rentalRepository.findById(rentalId)
                 .orElseThrow(() -> new EntityNotFoundException("Rental not found"));
 
         if (rental.getStatus() != RentalStatus.PENDING) {
@@ -84,11 +84,11 @@ public class RentalService {
         rental.setStatus(RentalStatus.ONGOING);
         rentalRepository.save(rental);
 
-        PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost(), rental.getUser().getEmail(), input.creditCardToken());
+        PaymentDetails paymentDetails = new PaymentDetails(rental.getTotalCost(), rental.getUser().getEmail(), dto.creditCardToken());
         PaymentIntent paymentIntent =  paymentGatewayService.processPayment(paymentDetails);
         return new PaymentResponseDto(paymentIntent.getId(), paymentIntent.getStatus());
     }
-    
+
     private boolean isEquipmentAvailable(Equipment equipment, LocalDateTime startDate, LocalDateTime endDate) {
         List<Rental> equipments = rentalRepository.findByEquipmentAndPeriod(equipment, startDate, endDate);
         return equipments.isEmpty();

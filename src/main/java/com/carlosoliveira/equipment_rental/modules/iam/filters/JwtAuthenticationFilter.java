@@ -1,4 +1,4 @@
-package com.carlosoliveira.equipment_rental.modules.iam.config;
+package com.carlosoliveira.equipment_rental.modules.iam.filters;
 
 import com.carlosoliveira.equipment_rental.modules.iam.services.TokenService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;

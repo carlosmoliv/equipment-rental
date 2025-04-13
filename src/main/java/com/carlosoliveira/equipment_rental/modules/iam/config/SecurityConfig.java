@@ -1,5 +1,6 @@
 package com.carlosoliveira.equipment_rental.modules.iam.config;
 
+import com.carlosoliveira.equipment_rental.modules.iam.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

@@ -3,7 +3,7 @@ package com.carlosoliveira.equipment_rental.modules.iam.config;
 import com.carlosoliveira.equipment_rental.modules.iam.services.TokenService;
 import com.carlosoliveira.equipment_rental.modules.user.domain.User;
 import com.carlosoliveira.equipment_rental.modules.user.infra.jpa.repositories.UserRepository;
-import com.carlosoliveira.equipment_rental.modules.user.domain.SecurityUser;
+import com.carlosoliveira.equipment_rental.modules.iam.SecurityUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
